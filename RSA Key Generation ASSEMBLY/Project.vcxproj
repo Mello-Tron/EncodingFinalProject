@@ -11,8 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm" />
-    <MASM Include="..\ch03\AddTwo.asm" />
+    <MASM Include="Main.asm" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4164AA65-1EF9-4E69-899B-D1BED776070B}</ProjectGuid>
