@@ -32,17 +32,31 @@ int main(){
 	int n = prime1*prime2;
 	int phi = (prime1 - 1)*(prime2 - 1);
 	int e;
-	bool cont = true;
-	vector<int> nfac, efac;
+	int d = 1;
+	
+	vector<int> nfac, efac, phifac;
 	nfac = factor(n);
 	for (int i = 2; i < phi; i++){
+		bool cont = true;
 		efac = factor(i);
 		for (int j = 0; j < nfac.size(); j++){
 			if (compare(nfac[j], efac, 0, efac.size() - 1)){
 				cont = false;
 			}
 		}
+		if (cont){
+			e = i;
+			break;
+		}
 		
 	}
+	cout << '-' << endl;
+	while (true){
+		if ((d*e) % phi == 1){
+			break;
+		}
+		d++;
+	}
+	cout << n << ' ' << phi << ' ' << e << ' ' << d << endl;
 	return 0;
 }
