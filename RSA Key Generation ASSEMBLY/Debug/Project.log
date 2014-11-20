@@ -1,0 +1,13 @@
+﻿Build started 8/26/2014 11:44:35 AM.
+     1>Project "C:\Irvine\Examples\Project32\Project.vcxproj" on node 2 (Build target(s)).
+     1>_MASM:
+         Assembling ..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm...
+         cmd.exe /C "C:\Users\student\AppData\Local\Temp\tmp809a169ae9ee4ad98c5ce372aa1f294e.cmd"
+         ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\algorithmWorkbench.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /Ta..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm
+     1>MASM : fatal error A1000: cannot open file : ..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations\masm.targets(50,5): error MSB3721: The command "ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\algorithmWorkbench.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /Ta..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm" exited with code 1.
+     1>Done Building Project "C:\Irvine\Examples\Project32\Project.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.75
