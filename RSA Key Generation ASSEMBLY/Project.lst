@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 11.00.60315.1	    01/18/14 19:22:46
-..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm  Page 1 - 1
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/19/14 22:27:46
+RSA Key Generatio					     Page 1 - 1
 
 
-				; AlgorithmWorkbench.asm - Algorithm workbench solutions, Chapter 9
+				TITLE RSA Key Generation
 
-				include irvine32.inc
+				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
 			      C ;OPTION CASEMAP:NONE		; optional: make identifiers case-sensitive
@@ -24,112 +24,34 @@ Microsoft (R) Macro Assembler Version 11.00.60315.1	    01/18/14 19:22:46
 			      C 
 
  00000000			.data
- 00000000 000A 0014 001E	sourcew WORD 10,20,30
- 00000006 000A 0014 0023	targetw WORD 10,20,35
- 0000000C = 00000003		count = ($ - targetw) / TYPE WORD
- 0000000C 0010 0020 0100	wordArray word 10h,20h,100h,30h
-	   0030
- 00000014 41 42 43 44 40	prob7string byte "ABCD@@@@",0
-	   40 40 40 00
 
  00000000			.code
  00000000			main PROC
+ 00000000  33 C0		    xor eax, eax
+ 00000002  33 C9			xor ecx, ecx
 
-				; 4 - compare two 16-bit arrays
- 00000000  B9 00000003			mov  ecx,count
- 00000005  BE 00000000 R		mov  esi,offset sourcew
- 0000000A  BF 00000006 R		mov  edi,offset targetw
- 0000000F  FC				cld
- 00000010  F3/ 66| A7			repe cmpsw
+ 00000004  B8 00000002			mov eax, 2
+ 00000009  50				push eax
+ 0000000A  41				inc ecx
 
-				; 5 - Use SCASW to scan for 0100h in wordArray, copy offset into EAX
- 00000013  FC				cld
- 00000014  B9 00000004			mov   ecx,4
- 00000019  BF 0000000C R		mov   edi,offset wordArray
- 0000001E  F2/ 66| AF			repne scasw
- 00000021  83 EF 04			sub   edi,4				; adjust the offset
- 00000024  8B C7			mov   eax,edi
+ 0000000B  B8 00000003			mov eax, 3
+ 00000010  50				push eax
+ 00000011  41				inc ecx
 
-				; 6 - calling Str_compare
- 00000026  E8 0000001D			call  problem6
+ 00000012  83 C0 02			add eax, 2	;next Number to try
+ 00000015  51				push ecx
+ 00000016			L1:
+					
+ 00000016  E2 FE			loop L1
+ 00000018  59				pop ecx
 
-				; 7 - calling Str_trim
-					invoke Str_trim, offset prob7string, '@'
- 0000002B  6A 40	   *	    push   +000000040h
- 0000002D  68 00000014 R   *	    push   dword  ptr OFFSET FLAT: prob7string
- 00000032  E8 00000000 E   *	    call   Str_trim
-
-				; 8 - convert string to lower case
-
-				Str_lcase PROTO,pString:PTR BYTE
- 0000001D			.data
- 0000001D 41 62 43 64 45	prob8string byte "AbCdEfG",0
-	   66 47 00
- 00000037			.code
-					invoke Str_lcase, offset prob8string
- 00000037  68 0000001D R   *	    push   dword  ptr OFFSET FLAT: prob8string
- 0000003C  E8 0000002F	   *	    call   Str_lcase
-
-					exit
- 00000041  6A 00	   *	    push   +000000000h
- 00000043  E8 00000000 E   *	    call   ExitProcess
- 00000048			main ENDP
-
-				; 6 - Use Str_compare proc to determine the larger of two input
-				;	  strings and write it to the console window.
- 00000048			problem6 proc
- 00000025			.data
- 00000025 41 42 43 44 45	str1 byte "ABCDE",0			; larger string
-	   00
- 0000002B 41 42 43 43 44	str2 byte "ABCCD",0
-	   00
- 00000048			.code
-					invoke  Str_compare, offset str1, offset str2
- 00000048  68 0000002B R   *	    push   dword  ptr OFFSET FLAT: str2
- 0000004D  68 00000025 R   *	    push   dword  ptr OFFSET FLAT: str1
- 00000052  E8 00000000 E   *	    call   Str_compare
- 00000057  77 07			ja    str1bigger
- 00000059  BA 0000002B R		mov	  edx,offset str2
- 0000005E  EB 05			jmp   print
- 00000060			str1bigger:
- 00000060  BA 00000025 R		mov   edx,offset str1
- 00000065			print:
- 00000065  E8 00000000 E		call  WriteString
- 0000006A  E8 00000000 E		call  Crlf
- 0000006F  C3				ret
- 00000070			problem6 endp
-
-				; convert string to lower case
- 00000070			Str_lcase PROC USES eax esi,
-					pString:PTR BYTE
-
- 00000070  55		   *	    push   ebp
- 00000071  8B EC	   *	    mov    ebp, esp
- 00000073  50		   *	    push   eax
- 00000074  56		   *	    push   esi
- 00000075  8B 75 08			mov esi,pString
- 00000078			L1:
- 00000078  8A 06			mov al,[esi]	; get char
- 0000007A  3C 00			cmp al,0	; end of string?
- 0000007C  74 0E			je L3 ; yes: quit
- 0000007E  3C 41			cmp al,'A' ; below "A"?
- 00000080  72 07			jb L2
- 00000082  3C 5A			cmp al,'Z' ; above "Z"?
- 00000084  77 03			ja L2
- 00000086  80 0E 20			or  BYTE PTR [esi],00100000b	; convert to lower case
-					;and BYTE PTR [esi],11011111b	; convert the char
- 00000089  46			L2: inc esi ; next char
- 0000008A  EB EC			jmp L1
- 0000008C			L3: ret
- 0000008C  5E		   *	    pop    esi
- 0000008D  58		   *	    pop    eax
- 0000008E  C9		   *	    leave  
- 0000008F  C2 0004	   *	    ret    00004h
- 00000092			Str_lcase ENDP
-
-				end main
-Microsoft (R) Macro Assembler Version 11.00.60315.1	    01/18/14 19:22:46
-..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm  Symbols 2 - 1
+				exit
+ 00000019  6A 00	   *	    push   +000000000h
+ 0000001B  E8 00000000 E   *	    call   ExitProcess
+ 00000020			main ENDP
+				END main
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/19/14 22:27:46
+RSA Key Generatio					     Symbols 2 - 1
 
 
 
@@ -222,8 +144,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000031 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000092 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000020 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -308,11 +230,6 @@ Sleep  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 StrLength  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_compare  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Str_lcase  . . . . . . . . . . .	P Near	 00000070 _TEXT	Length= 00000022 Public STDCALL
-  pString  . . . . . . . . . . .	DWord	 bp + 00000008
-  L1 . . . . . . . . . . . . . .	L Near	 00000078 _TEXT	
-  L2 . . . . . . . . . . . . . .	L Near	 00000089 _TEXT	
-  L3 . . . . . . . . . . . . . .	L Near	 0000008C _TEXT	
 Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -335,11 +252,9 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000048 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000020 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000016 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-problem6 . . . . . . . . . . . .	P Near	 00000048 _TEXT	Length= 00000028 Public STDCALL
-  str1bigger . . . . . . . . . .	L Near	 00000060 _TEXT	
-  print  . . . . . . . . . . . .	L Near	 00000065 _TEXT	
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 
@@ -560,7 +475,6 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-count  . . . . . . . . . . . . .	Number	 00000003h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
@@ -572,15 +486,8 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-prob7string  . . . . . . . . . .	Byte	 00000014 _DATA	
-prob8string  . . . . . . . . . .	Byte	 0000001D _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sourcew  . . . . . . . . . . . .	Word	 00000000 _DATA	
-str1 . . . . . . . . . . . . . .	Byte	 00000025 _DATA	
-str2 . . . . . . . . . . . . . .	Byte	 0000002B _DATA	
-targetw  . . . . . . . . . . . .	Word	 00000006 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
-wordArray  . . . . . . . . . . .	Word	 0000000C _DATA	
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 

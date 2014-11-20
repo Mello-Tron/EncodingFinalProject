@@ -1,13 +1,14 @@
-﻿Build started 8/26/2014 11:44:35 AM.
-     1>Project "C:\Irvine\Examples\Project32\Project.vcxproj" on node 2 (Build target(s)).
+﻿Build started 11/19/2014 10:27:46 PM.
+     1>Project "C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\RSA Key Generation ASSEMBLY\Project.vcxproj" on node 2 (Build target(s)).
      1>_MASM:
-         Assembling ..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm...
-         cmd.exe /C "C:\Users\student\AppData\Local\Temp\tmp809a169ae9ee4ad98c5ce372aa1f294e.cmd"
-         ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\algorithmWorkbench.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /Ta..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm
-     1>MASM : fatal error A1000: cannot open file : ..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm
-     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations\masm.targets(50,5): error MSB3721: The command "ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\algorithmWorkbench.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /Ta..\..\instructor\SolutionsProgExercises\chapt_9\algorithmWorkbench.asm" exited with code 1.
-     1>Done Building Project "C:\Irvine\Examples\Project32\Project.vcxproj" (Build target(s)) -- FAILED.
+         Assembling Main.asm...
+         cmd.exe /C "C:\Users\pherbert17\AppData\Local\Temp\tmp06d501642fe547668da29d9b87ca196b.cmd"
+         ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\Main.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /TaMain.asm
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\RSA Key Generation ASSEMBLY\Debug\Project.exe" /NOLOGO /LIBPATH:c:\Irvine user32.lib irvine32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\RSA Key Generation ASSEMBLY\Debug\Project.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\RSA Key Generation ASSEMBLY\Debug\Project.lib" /MACHINE:X86 /SAFESEH:NO Debug\Main.obj
+         Project.vcxproj -> C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\RSA Key Generation ASSEMBLY\Debug\Project.exe
+     1>Done Building Project "C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\RSA Key Generation ASSEMBLY\Project.vcxproj" (Build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:00.75
+Time Elapsed 00:00:00.31
