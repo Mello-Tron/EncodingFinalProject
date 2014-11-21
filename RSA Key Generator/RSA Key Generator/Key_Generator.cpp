@@ -34,13 +34,13 @@ int main(){
 	int e;
 	int d = 1;
 	
-	vector<int> nfac, efac, phifac;
-	nfac = factor(n);
-	for (int i = 2; i < phi; i++){
+	vector<int> phifac, efac;
+	phifac = factor(phi);
+	for (int i = 100000; i < phi; i++){
 		bool cont = true;
 		efac = factor(i);
-		for (int j = 0; j < nfac.size(); j++){
-			if (compare(nfac[j], efac, 0, efac.size() - 1)){
+		for (int j = 0; j < phifac.size(); j++){
+			if (compare(phifac[j], efac, 0, efac.size() - 1)){
 				cont = false;
 			}
 		}
@@ -57,6 +57,7 @@ int main(){
 		}
 		d++;
 	}
-	cout << n << ' ' << phi << ' ' << e << ' ' << d << endl;
+	cout << "Public Key: ( " << e << " , " << n << " )\n"
+		<< "Private Key: ( " << d << " , " << n << " )\n";
 	return 0;
 }
