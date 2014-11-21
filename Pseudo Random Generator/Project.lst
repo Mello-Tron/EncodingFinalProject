@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/20/14 16:07:36
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/20/14 21:22:07
 Psuedo Random Number Generato				     Page 1 - 1
 
 
@@ -22,49 +22,66 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/20/14 16:07:36
 			      C .NOLIST
 			      C .LIST
 			      C 
-
+											;R(n) = ((R(0) * K) + S) % MAX_NUM_CHAR
  00000000			.data
- 00000000 61 70 70 6C 65	inputString BYTE "apple"
- 00000005 20 20 20 20 20	outputString BYTE "     "
- 0000000A 0000001E		R0 DWORD 30					;whatever TIME is
- 0000000E 00000014		K DWORD 20					;whatever constant we want
- 00000012 0000000C		S DWORD 12					;whatever constant we want
- 00000016 00000005		MAX_NUM_CHAR DWORD 5		;whatever character count is
+ 00000000 61 70 70 6C 65	inputString BYTE "apple&pie"
+	   26 70 69 65
+ 00000009 20 20 20 20 20	outputString BYTE "         "
+	   20 20 20 20
+ 00000012 00000004		R0 DWORD 4					;0 =< R(0) < MAX_NUM_CHAR
+ 00000016 00000004		K DWORD 4					;0 < K < MAX_NUM_CHAR			K-1 is divisble by all prime factors of MAX_NUM_CHAR, K-1 is multiple of 4, if MAX_NUM_CHAR is a multiple of 4
+ 0000001A 00000007		S DWORD 7					;0 =< S < MAX_NUM_CHAR			MAX_NUM_CHAR and S are coprime
+ 0000001E 00000009		MAX_NUM_CHAR DWORD 9		;whatever character count is
 
  00000000			.code
  00000000			main PROC
  00000000  BB 00000000 R		mov ebx, OFFSET inputString
  00000005  33 F6			xor esi, esi
- 00000007  A1 0000000A R		mov eax, R0					;eax = R(0) or TIME ... in this case 300
+ 00000007  A1 00000012 R		mov eax, R0					;eax = R(0) or TIME ... in this case 300
 
  0000000C			L1:
- 0000000C  F7 25 0000000E R		mul K						;edx:eax = R(0) * K
- 00000012  03 05 00000012 R		add eax, S					;edx:eax = (R(0) * K) + S
- 00000018  F7 35 00000016 R		div MAX_NUM_CHAR			;edx = ((R(0) * K) + S) % MAX_NUM_CHAR which is R(n)
+ 0000000C  F7 25 00000016 R		mul K						;edx:eax = R(0) * K
+ 00000012  03 05 0000001A R		add eax, S					;edx:eax = (R(0) * K) + S
+ 00000018  F7 35 0000001E R		div MAX_NUM_CHAR			;edx = ((R(0) * K) + S) % MAX_NUM_CHAR which is R(n)
  0000001E  8B C2			mov eax, edx				;eax = "...see above..."
 
- 00000020  B9 00000005 R		mov ecx, OFFSET outputString		;ecx = OFFSET outputString
+ 00000020  B9 00000009 R		mov ecx, OFFSET outputString		;ecx = OFFSET outputString
  00000025  03 C8			add ecx, eax						;ecx = OFFSET outputString + R(n)
  00000027  33 D2			xor edx, edx
  00000029  8A 11			mov dl, BYTE PTR [ecx]				;edx = the character at R(n) location in outputString
 
- 0000002B  F7 C2 000000DF		test edx, 11011111b		;test with " " which is 20h which is 00100000b
- 00000031  75 01			jnz ShouldWeLoop			;lets jump if there is something other than an empty space
+ 0000002B  F7 C2 000000DF		test edx, 11011111b					;test with " " which is 20h which is 00100000b
+ 00000031  75 10			jnz ShouldWeLoop					;lets jump if there is something other than an empty space
 
-					;Let's take the next letter from inputString and put it in outputString
+ 00000033  53				push ebx
 
- 00000033  46				inc esi
+ 00000034  51				push ecx							;Let's take the next letter from inputString and put it in outputString
+ 00000035  33 C9			xor ecx, ecx
+ 00000037  8A 0B			mov cl, BYTE PTR [ebx]
+ 00000039  33 DB			xor ebx, ebx
+ 0000003B  8A D9			mov bl, cl
+ 0000003D  59				pop ecx
 
- 00000034			ShouldWeLoop:
-					
+ 0000003E  88 19			mov [ecx], bl
+ 00000040  46				inc esi
+
+ 00000041  5B				pop ebx
+ 00000042  43				inc ebx
+
+ 00000043			ShouldWeLoop:
+ 00000043  3B 35 0000001E R		cmp esi, MAX_NUM_CHAR
+ 00000049  74 02			je No
+ 0000004B  EB BF			jmp L1
+ 0000004D			No:
+
 					;now check if esi == MAX_NUM_CHAR then {we are done} else {loop again}
 
 				exit
- 00000034  6A 00	   *	    push   +000000000h
- 00000036  E8 00000000 E   *	    call   ExitProcess
- 0000003B			main ENDP
+ 0000004D  6A 00	   *	    push   +000000000h
+ 0000004F  E8 00000000 E   *	    call   ExitProcess
+ 00000054			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/20/14 16:07:36
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/20/14 21:22:07
 Psuedo Random Number Generato				     Symbols 2 - 1
 
 
@@ -158,8 +175,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000001A Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000003B Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000022 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000054 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -266,9 +283,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000003B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000054 Public STDCALL
   L1 . . . . . . . . . . . . . .	L Near	 0000000C _TEXT	
-  ShouldWeLoop . . . . . . . . .	L Near	 00000034 _TEXT	
+  ShouldWeLoop . . . . . . . . .	L Near	 00000043 _TEXT	
+  No . . . . . . . . . . . . . .	L Near	 0000004D _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -358,10 +376,10 @@ INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h
 KBDOWN_FLAG  . . . . . . . . . .	Number	 00000001h   
 KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
-K  . . . . . . . . . . . . . . .	DWord	 0000000E _DATA	
+K  . . . . . . . . . . . . . . .	DWord	 00000016 _DATA	
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
-MAX_NUM_CHAR . . . . . . . . . .	DWord	 00000016 _DATA	
+MAX_NUM_CHAR . . . . . . . . . .	DWord	 0000001E _DATA	
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -394,7 +412,7 @@ NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
-R0 . . . . . . . . . . . . . . .	DWord	 0000000A _DATA	
+R0 . . . . . . . . . . . . . . .	DWord	 00000012 _DATA	
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
 ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
@@ -406,7 +424,7 @@ STD_ERROR_HANDLE . . . . . . . .	Number	 -0000000Ch
 STD_INPUT_HANDLE . . . . . . . .	Number	 -0000000Ah   
 STD_OUTPUT_HANDLE  . . . . . . .	Number	 -0000000Bh   
 SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
-S  . . . . . . . . . . . . . . .	DWord	 00000012 _DATA	
+S  . . . . . . . . . . . . . . .	DWord	 0000001A _DATA	
 TAB  . . . . . . . . . . . . . .	Number	 00000009h   
 TRUE . . . . . . . . . . . . . .	Number	 00000001h   
 TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
@@ -506,7 +524,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-outputString . . . . . . . . . .	Byte	 00000005 _DATA	
+outputString . . . . . . . . . .	Byte	 00000009 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
