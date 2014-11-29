@@ -1,9 +1,14 @@
-﻿Build started 11/28/2014 6:29:50 PM.
+﻿Build started 11/28/2014 6:38:43 PM.
      1>Project "C:\Users\Patrick Herbert\Documents\GitHub\EncodingFinalProject\PseudoRandomEncryption PROC\Project.vcxproj" on node 2 (Build target(s)).
-     1>Link:
+     1>_MASM:
+         Assembling Main.asm...
+         cmd.exe /C "C:\Users\Patrick Herbert\AppData\Local\Temp\tmp37c9426e471842d6bee28a6df5334b66.cmd"
+         ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\Main.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /TaMain.asm
+       Link:
+         E:\Visual Studio 2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Patrick Herbert\Documents\GitHub\EncodingFinalProject\PseudoRandomEncryption PROC\Debug\Project.exe" /NOLOGO /LIBPATH:c:\Irvine user32.lib irvine32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Patrick Herbert\Documents\GitHub\EncodingFinalProject\PseudoRandomEncryption PROC\Debug\Project.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"C:\Users\Patrick Herbert\Documents\GitHub\EncodingFinalProject\PseudoRandomEncryption PROC\Debug\Project.lib" /MACHINE:X86 /SAFESEH:NO Debug\Main.obj
          Project.vcxproj -> C:\Users\Patrick Herbert\Documents\GitHub\EncodingFinalProject\PseudoRandomEncryption PROC\Debug\Project.exe
      1>Done Building Project "C:\Users\Patrick Herbert\Documents\GitHub\EncodingFinalProject\PseudoRandomEncryption PROC\Project.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.04
+Time Elapsed 00:00:00.37

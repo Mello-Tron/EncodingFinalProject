@@ -1,19 +1,19 @@
 TITLE Psuedo Random Number Generator & Decryption
 
 INCLUDE Irvine32.inc
-							;R(n) = ((R(0) * K) + S) % MAX_NUM_CHAR
+							;R(n) = ((R(0) * K) + T) % MAX_NUM_CHAR
 .data
 inputString BYTE "p&peeaipl"
 outputString BYTE "         "
 R0 DWORD 4					;0 =< R(0) < MAX_NUM_CHAR
 K DWORD 4					;0 < K < MAX_NUM_CHAR			K-1 is divisble by all prime factors of MAX_NUM_CHAR, K-1 is multiple of 4, if MAX_NUM_CHAR is a multiple of 4
-S DWORD 7					;0 =< S < MAX_NUM_CHAR			MAX_NUM_CHAR and S are coprime
+T DWORD 7					;0 =< T < MAX_NUM_CHAR			MAX_NUM_CHAR and T are coprime
 MAX_NUM_CHAR DWORD 9		;whatever character count is
 
 .code
 main PROC
 
-	push S
+	push T
 	push MAX_NUM_CHAR
 	push OFFSET inputString
 	push R0
@@ -26,10 +26,10 @@ exit
 main ENDP
 
 ;--------------------------------------------------------------------------------
-PseudoRandDecrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _S:DWORD
+PseudoRandDecrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _T:DWORD
 ;Generates random integers between 0 and (MAX_NUM_CHAR - 1) & decrypts a string.
 ;Recieves: _K: K constant, _output: OFFSET outputString, _R0: Seed
-;		   _input: OFFSET inputString, _MAX: Max number of characters, _S: S constant
+;		   _input: OFFSET inputString, _MAX: Max number of characters, _T: T constant
 ;Returns:
 ;--------------------------------------------------------------------------------
 	xor esi, esi				;esi = 0
@@ -40,11 +40,11 @@ PseudoRandDecrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWOR
 
 L1:
 	mov edx, _K
-	mov edi, _S
+	mov edi, _T
 
 	mul edx						;edx:eax = R(0) * K
-	add eax, edi				;edx:eax = (R(0) * K) + S
-	div _MAX					;edx = ((R(0) * K) + S) % MAX_NUM_CHAR which is R(n)
+	add eax, edi				;edx:eax = (R(0) * K) + T
+	div _MAX					;edx = ((R(0) * K) + T) % MAX_NUM_CHAR which is R(n)
 	mov eax, edx				;eax = "...see above..."
 
 	mov edi, ecx						;edi = OFFSET inputString
