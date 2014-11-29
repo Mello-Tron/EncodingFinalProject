@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:38:43
+Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:52:05
 +Psuedo Random Number Generator & Encryptio		     Page 1 - 1
 
 
@@ -30,7 +30,7 @@ Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:38:43
 	   20 20 20 20
  00000012 00000004		R0 DWORD 4					;0 =< R(0) < MAX_NUM_CHAR
  00000016 00000004		K DWORD 4					;0 < K < MAX_NUM_CHAR			K-1 is divisble by all prime factors of MAX_NUM_CHAR, K-1 is multiple of 4, if MAX_NUM_CHAR is a multiple of 4
- 0000001A 00000007		T DWORD 7					;0 =< T < MAX_NUM_CHAR			MAX_NUM_CHAR and T are coprime
+ 0000001A 00000002		T DWORD 2					;0 =< T < MAX_NUM_CHAR			MAX_NUM_CHAR and T are coprime
  0000001E 00000009		MAX_NUM_CHAR DWORD 9		;whatever character count is
 
  00000000			.code
@@ -109,7 +109,7 @@ Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:38:43
  00000078			PseudoRandEncrypt ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:38:43
+Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:52:05
 +Psuedo Random Number Generator & Encryptio		     Symbols 2 - 1
 
 
