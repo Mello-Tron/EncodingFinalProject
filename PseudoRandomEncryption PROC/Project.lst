@@ -1,8 +1,8 @@
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/21/14 21:23:25
-(Psuedo Random Number Generator Procedur		     Page 1 - 1
+Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:29:47
++Psuedo Random Number Generator & Encryptio		     Page 1 - 1
 
 
-				TITLE Psuedo Random Number Generator Procedure
+				TITLE Psuedo Random Number Generator & Encryption
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -42,7 +42,7 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/21/14 21:23:25
  00000017  68 00000009 R		push OFFSET outputString
  0000001C  FF 35 00000016 R		push K
 
- 00000022  E8 00000007			call GenerateRandomInteger
+ 00000022  E8 00000007			call PseudoRandEncrypt
 
 				exit
  00000027  6A 00	   *	    push   +000000000h
@@ -50,7 +50,7 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/21/14 21:23:25
  0000002E			main ENDP
 
 				;--------------------------------------------------------------------------------
- 0000002E			GenerateRandomInteger PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _S:DWORD
+ 0000002E			PseudoRandEncrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _S:DWORD
 				;Generates a random integer between 0 and (MAX_NUM_CHAR - 1).
 				;Recieves: _K: K constant, _output: OFFSET outputString, _R0: Seed
 				;		   _input: OFFSET inputString, _MAX: Max number of characters, _S: S constant
@@ -106,11 +106,11 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/21/14 21:23:25
  00000073  5E		   *	    pop    esi
  00000074  C9		   *	    leave  
  00000075  C2 0018	   *	    ret    00018h
- 00000078			GenerateRandomInteger ENDP
+ 00000078			PseudoRandEncrypt ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    11/21/14 21:23:25
-(Psuedo Random Number Generator Procedur		     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:29:47
++Psuedo Random Number Generator & Encryptio		     Symbols 2 - 1
 
 
 
@@ -225,16 +225,6 @@ FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GenerateRandomInteger  . . . . .	P Near	 0000002E _TEXT	Length= 0000004A Public STDCALL
-  _K . . . . . . . . . . . . . .	DWord	 bp + 00000008
-  _output  . . . . . . . . . . .	DWord	 bp + 0000000C
-  _R0  . . . . . . . . . . . . .	DWord	 bp + 00000010
-  _input . . . . . . . . . . . .	DWord	 bp + 00000014
-  _MAX . . . . . . . . . . . . .	DWord	 bp + 00000018
-  _S . . . . . . . . . . . . . .	DWord	 bp + 0000001C
-  L1 . . . . . . . . . . . . . .	L Near	 0000003D _TEXT	
-  ShouldWeLoop . . . . . . . . .	L Near	 0000006C _TEXT	
-  No . . . . . . . . . . . . . .	L Near	 00000073 _TEXT	
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -269,6 +259,16 @@ OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PseudoRandEncrypt  . . . . . . .	P Near	 0000002E _TEXT	Length= 0000004A Public STDCALL
+  _K . . . . . . . . . . . . . .	DWord	 bp + 00000008
+  _output  . . . . . . . . . . .	DWord	 bp + 0000000C
+  _R0  . . . . . . . . . . . . .	DWord	 bp + 00000010
+  _input . . . . . . . . . . . .	DWord	 bp + 00000014
+  _MAX . . . . . . . . . . . . .	DWord	 bp + 00000018
+  _S . . . . . . . . . . . . . .	DWord	 bp + 0000001C
+  L1 . . . . . . . . . . . . . .	L Near	 0000003D _TEXT	
+  ShouldWeLoop . . . . . . . . .	L Near	 0000006C _TEXT	
+  No . . . . . . . . . . . . . .	L Near	 00000073 _TEXT	
 Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL

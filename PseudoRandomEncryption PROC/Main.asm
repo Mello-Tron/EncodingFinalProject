@@ -1,4 +1,4 @@
-TITLE Psuedo Random Number Generator Procedure
+TITLE Psuedo Random Number Generator & Encryption
 
 INCLUDE Irvine32.inc
 							;R(n) = ((R(0) * K) + S) % MAX_NUM_CHAR
@@ -19,13 +19,13 @@ main PROC
 	push OFFSET outputString
 	push K
 
-	call GenerateRandomInteger
+	call PseudoRandEncrypt
 
 exit
 main ENDP
 
 ;--------------------------------------------------------------------------------
-GenerateRandomInteger PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _S:DWORD
+PseudoRandEncrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _S:DWORD
 ;Generates a random integer between 0 and (MAX_NUM_CHAR - 1).
 ;Recieves: _K: K constant, _output: OFFSET outputString, _R0: Seed
 ;		   _input: OFFSET inputString, _MAX: Max number of characters, _S: S constant
@@ -75,6 +75,6 @@ ShouldWeLoop:							;now check if esi == MAX_NUM_CHAR then {we are done} else {l
 	jmp L1
 No:
 	ret
-GenerateRandomInteger ENDP
+PseudoRandEncrypt ENDP
 
 END main
