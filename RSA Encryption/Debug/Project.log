@@ -1,8 +1,8 @@
-﻿Build started 12/4/2014 3:10:15 PM.
+﻿Build started 12/4/2014 3:24:40 PM.
      1>Project "C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\RSA Encryption\Project.vcxproj" on node 2 (Build target(s)).
      1>_MASM:
          Assembling RSA Encoding.asm...
-         cmd.exe /C "C:\Users\jTrader17\AppData\Local\Temp\tmp6deb06dfc809451fa7d022f0fabc6b82.cmd"
+         cmd.exe /C "C:\Users\jTrader17\AppData\Local\Temp\tmp36ea7e5fd9854ba8b70bee77164e1b87.cmd"
          ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\RSA Encoding.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /Ta"RSA Encoding.asm"
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\RSA Encryption\Debug\Project.exe" /NOLOGO /LIBPATH:c:\Irvine user32.lib irvine32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\RSA Encryption\Debug\Project.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\RSA Encryption\Debug\Project.lib" /MACHINE:X86 /SAFESEH:NO "Debug\RSA Encoding.obj"
@@ -11,4 +11,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.29
+Time Elapsed 00:00:00.32
