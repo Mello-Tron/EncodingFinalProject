@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 15:24:40
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 15:47:00
 RSA Encoding.asm					     Page 1 - 1
 
 
@@ -23,52 +23,52 @@ RSA Encoding.asm					     Page 1 - 1
  00000000			.data
  00000000 61 62 63 64 65	source BYTE "abcdefgh",0
 	   66 67 68 00
- 00000009 00000005		enum DWORD 5
- 0000000D 000001CD		dnum DWORD 461
- 00000011 000004D9		nnum DWORD 1241
+ 00000009 00000003		enum DWORD 3
+ 0000000D 09024403		dnum DWORD 151143427
+ 00000011 0D83DBA9		nnum DWORD 226745257
  00000000			.code
  00000000			main proc
 				  
  00000000  B9 00000009			mov ecx, SIZEOF source
-					;dec ecx
- 00000005  BE 00000000			mov esi, 0
+ 00000005  49				dec ecx
+ 00000006  BE 00000000			mov esi, 0
 					
- 0000000A				L1:
- 0000000A  B8 00000000				mov eax, 0
- 0000000F  BB 00000000				mov ebx, 0
- 00000014  51					push ecx
- 00000015  8B 0D 00000009 R			mov ecx, enum
- 0000001B  49					dec ecx
- 0000001C  8A 86 00000000 R			mov al, [source+esi]
- 00000022  8A 9E 00000000 R			mov bl, [source+esi]
- 00000028					L2:
- 00000028  F7 E3					mul ebx
- 0000002A  F7 35 00000011 R				div nnum
- 00000030  8B C2					mov eax, edx
- 00000032  BA 00000000					mov edx, 0
- 00000037  E2 EF				loop L2
+ 0000000B				L1:
+ 0000000B  B8 00000000				mov eax, 0
+ 00000010  BB 00000000				mov ebx, 0
+ 00000015  51					push ecx
+ 00000016  8B 0D 00000009 R			mov ecx, enum
+ 0000001C  49					dec ecx
+ 0000001D  8A 86 00000000 R			mov al, [source+esi]
+ 00000023  8A 9E 00000000 R			mov bl, [source+esi]
+ 00000029					L2:
+ 00000029  F7 E3					mul ebx
+ 0000002B  F7 35 00000011 R				div nnum
+ 00000031  8B C2					mov eax, edx
+ 00000033  BA 00000000					mov edx, 0
+ 00000038  E2 EF				loop L2
 						
- 00000039  E8 00000000 E			call WriteInt
- 0000003E  E8 00000000 E			call CRLF
+ 0000003A  E8 00000000 E			call WriteInt
+ 0000003F  E8 00000000 E			call CRLF
 
 
- 00000043  8B 0D 0000000D R			mov ecx, dnum
- 00000049  49					dec ecx
- 0000004A  8B D8				mov ebx, eax
- 0000004C					L3:
- 0000004C  F7 E3					mul ebx
- 0000004E  F7 35 00000011 R				div nnum
- 00000054  8B C2					mov eax, edx
- 00000056  BA 00000000					mov edx, 0
- 0000005B  E2 EF				loop L3
+ 00000044  8B 0D 0000000D R			mov ecx, dnum
+ 0000004A  49					dec ecx
+ 0000004B  8B D8				mov ebx, eax
+ 0000004D					L3:
+ 0000004D  F7 E3					mul ebx
+ 0000004F  F7 35 00000011 R				div nnum
+ 00000055  8B C2					mov eax, edx
+ 00000057  BA 00000000					mov edx, 0
+ 0000005C  E2 EF				loop L3
 								
- 0000005D  E8 00000000 E			call WriteChar
- 00000062  E8 00000000 E			call CRLF
+ 0000005E  E8 00000000 E			call WriteChar
+ 00000063  E8 00000000 E			call CRLF
 
 
- 00000067  59					pop ecx
- 00000068  46					inc esi
- 00000069  E2 9F			loop L1
+ 00000068  59					pop ecx
+ 00000069  46					inc esi
+ 0000006A  E2 9F			loop L1
 
 					
 
@@ -76,11 +76,11 @@ RSA Encoding.asm					     Page 1 - 1
 
 
 					invoke ExitProcess,0
- 0000006B  6A 00	   *	    push   +000000000h
- 0000006D  E8 00000000 E   *	    call   ExitProcess
- 00000072			main endp
+ 0000006C  6A 00	   *	    push   +000000000h
+ 0000006E  E8 00000000 E   *	    call   ExitProcess
+ 00000073			main endp
 				end main
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 15:24:40
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 15:47:00
 RSA Encoding.asm					     Symbols 2 - 1
 
 
@@ -175,7 +175,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000015 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000072 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000073 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -282,10 +282,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000072 Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 0000000A _TEXT	
-  L2 . . . . . . . . . . . . . .	L Near	 00000028 _TEXT	
-  L3 . . . . . . . . . . . . . .	L Near	 0000004C _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000073 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 0000000B _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 00000029 _TEXT	
+  L3 . . . . . . . . . . . . . .	L Near	 0000004D _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C

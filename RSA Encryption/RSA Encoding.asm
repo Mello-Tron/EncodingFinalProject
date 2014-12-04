@@ -1,14 +1,14 @@
 INCLUDE Irvine32.inc    
 .data
 source BYTE "abcdefgh",0
-enum DWORD 5
-dnum DWORD 461
-nnum DWORD 1241
+enum DWORD 3
+dnum DWORD 151143427
+nnum DWORD 226745257
 .code
 main proc
   
 	mov ecx, SIZEOF source
-	;dec ecx
+	dec ecx
 	mov esi, 0
 	
 	L1:
