@@ -1,0 +1,15 @@
+﻿Build started 12/4/2014 3:21:01 PM.
+     1>Project "C:\Users\pherbert17\Desktop\Determine Constants ASM\Project.vcxproj" on node 2 (Build target(s)).
+     1>_MASM:
+         Assembling Source.asm...
+         cmd.exe /C "C:\Users\pherbert17\AppData\Local\Temp\tmp25c09a4a589945f9a6a582a0ea36da57.cmd"
+         ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\Source.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /TaSource.asm
+     1>Source.asm(480): error A2034: must be in segment block
+     1>Source.asm(481): error A2034: must be in segment block
+     1>Source.asm(482): fatal error A1010: unmatched block nesting : _BSS
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations\masm.targets(50,5): error MSB3721: The command "ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\Source.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /TaSource.asm" exited with code 1.
+     1>Done Building Project "C:\Users\pherbert17\Desktop\Determine Constants ASM\Project.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.70
