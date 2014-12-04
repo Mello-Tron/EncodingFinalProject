@@ -36,7 +36,7 @@ int main(){
 	
 	vector<int> phifac, efac;
 	phifac = factor(phi);
-	for (int i = 100000; i < phi; i++){
+	for (int i = 2; i < phi; i++){
 		bool cont = true;
 		efac = factor(i);
 		for (int j = 0; j < phifac.size(); j++){

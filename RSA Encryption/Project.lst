@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 11:22:43
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 15:10:16
 RSA Encoding.asm					     Page 1 - 1
 
 
@@ -21,33 +21,52 @@ RSA Encoding.asm					     Page 1 - 1
 			      C .LIST
 			      C 
  00000000			.data
- 00000000 02			source  BYTE 2
- 00000001 00000007		enum DWORD 7
- 00000005 00000003		dnum DWORD 3
- 00000009 00000021		nnum DWORD 33
+ 00000000 02 16 05 10		source BYTE 2, 22, 5, 16     ;"abcdefgh",0
+ 00000004 00000005		enum DWORD 5
+ 00000008 000001CD		dnum DWORD 461
+ 0000000C 000004D9		nnum DWORD 1241
  00000000			.code
  00000000			main proc
 				  
- 00000000  B9 00000001			mov ecx, SIZEOF source
+ 00000000  B9 00000004			mov ecx, SIZEOF source
+					;dec ecx
  00000005  BE 00000000			mov esi, 0
  0000000A  B8 00000000			mov eax, 0
  0000000F  BB 00000000			mov ebx, 0
-					;L1:
+ 00000014				L1:
  00000014  51					push ecx
- 00000015  8B 0D 00000001 R			mov ecx, enum
+ 00000015  8B 0D 00000004 R			mov ecx, enum
  0000001B  49					dec ecx
  0000001C  8A 86 00000000 R			mov al, [source+esi]
  00000022  8A 9E 00000000 R			mov bl, [source+esi]
  00000028					L2:
  00000028  F7 E3					mul ebx
- 0000002A  F7 35 00000009 R				div nnum
+ 0000002A  F7 35 0000000C R				div nnum
  00000030  8B C2					mov eax, edx
  00000032  BA 00000000					mov edx, 0
  00000037  E2 EF				loop L2
- 00000039  59					pop ecx
- 0000003A  E8 00000000 E			call WriteInt
- 0000003F  E8 00000000 E			call CRLF
-					;loop L1
+						
+ 00000039  E8 00000000 E			call WriteInt
+ 0000003E  E8 00000000 E			call CRLF
+
+
+ 00000043  8B 0D 00000008 R			mov ecx, dnum
+ 00000049  49					dec ecx
+ 0000004A  8B D8				mov ebx, eax
+ 0000004C					L3:
+ 0000004C  F7 E3					mul ebx
+ 0000004E  F7 35 0000000C R				div nnum
+ 00000054  8B C2					mov eax, edx
+ 00000056  BA 00000000					mov edx, 0
+ 0000005B  E2 EF				loop L3
+								
+ 0000005D  E8 00000000 E			call WriteInt
+ 00000062  E8 00000000 E			call CRLF
+
+
+ 00000067  59					pop ecx
+ 00000068  46					inc esi
+ 00000069  E2 A9			loop L1
 
 					
 
@@ -55,11 +74,11 @@ RSA Encoding.asm					     Page 1 - 1
 
 
 					invoke ExitProcess,0
- 00000044  6A 00	   *	    push   +000000000h
- 00000046  E8 00000000 E   *	    call   ExitProcess
- 0000004B			main endp
+ 0000006B  6A 00	   *	    push   +000000000h
+ 0000006D  E8 00000000 E   *	    call   ExitProcess
+ 00000072			main endp
 				end main
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 11:22:43
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/04/14 15:10:16
 RSA Encoding.asm					     Symbols 2 - 1
 
 
@@ -153,8 +172,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000000D Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000004B Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000010 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000072 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -261,8 +280,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000072 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000014 _TEXT	
   L2 . . . . . . . . . . . . . .	L Near	 00000028 _TEXT	
+  L3 . . . . . . . . . . . . . .	L Near	 0000004C _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -485,8 +506,8 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-dnum . . . . . . . . . . . . . .	DWord	 00000005 _DATA	
-enum . . . . . . . . . . . . . .	DWord	 00000001 _DATA	
+dnum . . . . . . . . . . . . . .	DWord	 00000008 _DATA	
+enum . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
@@ -497,7 +518,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-nnum . . . . . . . . . . . . . .	DWord	 00000009 _DATA	
+nnum . . . . . . . . . . . . . .	DWord	 0000000C _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 source . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   

@@ -1,17 +1,18 @@
 INCLUDE Irvine32.inc    
 .data
-source  BYTE 2
-enum DWORD 7
-dnum DWORD 3
-nnum DWORD 33
+source BYTE 2, 22, 5, 16     ;"abcdefgh",0
+enum DWORD 5
+dnum DWORD 461
+nnum DWORD 1241
 .code
 main proc
   
 	mov ecx, SIZEOF source
+	;dec ecx
 	mov esi, 0
 	mov eax, 0
 	mov ebx, 0
-	;L1:
+	L1:
 		push ecx
 		mov ecx, enum
 		dec ecx
@@ -23,10 +24,28 @@ main proc
 			mov eax, edx
 			mov edx, 0
 		loop L2
-		pop ecx
+		
 		call WriteInt
 		call CRLF
-	;loop L1
+
+
+		mov ecx, dnum
+		dec ecx
+		mov ebx, eax
+		L3:
+			mul ebx
+			div nnum
+			mov eax, edx
+			mov edx, 0
+		loop L3
+				
+		call WriteInt
+		call CRLF
+
+
+		pop ecx
+		inc esi
+	loop L1
 
 	
 
