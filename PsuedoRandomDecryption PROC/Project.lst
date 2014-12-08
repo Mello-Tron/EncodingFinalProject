@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:39:30
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/07/14 19:14:48
 +Psuedo Random Number Generator & Decryptio		     Page 1 - 1
 
 
@@ -24,24 +24,50 @@ Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:39:30
 			      C 
 											;R(n) = ((R(0) * K) + T) % MAX_NUM_CHAR
  00000000			.data
- 00000000 70 26 70 65 65	inputString BYTE "p&peeaipl"
-	   61 69 70 6C
- 00000009 20 20 20 20 20	outputString BYTE "         "
-	   20 20 20 20
- 00000012 00000004		R0 DWORD 4					;0 =< R(0) < MAX_NUM_CHAR
- 00000016 00000004		K DWORD 4					;0 < K < MAX_NUM_CHAR			K-1 is divisble by all prime factors of MAX_NUM_CHAR, K-1 is multiple of 4, if MAX_NUM_CHAR is a multiple of 4
- 0000001A 00000007		T DWORD 7					;0 =< T < MAX_NUM_CHAR			MAX_NUM_CHAR and T are coprime
- 0000001E 00000009		MAX_NUM_CHAR DWORD 9		;whatever character count is
+ 00000000 34 35 34 33 30	inputString BYTE "454305898749232183678527012961456305890749234183698727032161476505110962"
+	   35 38 39 38 37
+	   34 39 32 33 32
+	   31 38 33 36 37
+	   38 35 32 37 30
+	   31 32 39 36 31
+	   34 35 36 33 30
+	   35 38 39 30 37
+	   34 39 32 33 34
+	   31 38 33 36 39
+	   38 37 32 37 30
+	   33 32 31 36 31
+	   34 37 36 35 30
+	   35 31 31 30 39
+	   36 32
+ 00000048 20 20 20 20 20	outputString BYTE "                                                                        "
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20
+ 00000090 00000047		R0 DWORD 71					;0 =< R(0) < MAX_NUM_CHAR
+ 00000094 0000000D		K DWORD 13					;0 < K < MAX_NUM_CHAR			K-1 is divisble by all prime factors of MAX_NUM_CHAR, K-1 is multiple of 4, if MAX_NUM_CHAR is a multiple of 4
+ 00000098 00000005		T DWORD 5					;0 =< T < MAX_NUM_CHAR			MAX_NUM_CHAR and T are coprime
+ 0000009C 00000048		MAX_NUM_CHAR DWORD 72		;whatever character count is
 
  00000000			.code
  00000000			main PROC
 
- 00000000  FF 35 0000001A R		push T
- 00000006  FF 35 0000001E R		push MAX_NUM_CHAR
+ 00000000  FF 35 00000098 R		push T
+ 00000006  FF 35 0000009C R		push MAX_NUM_CHAR
  0000000C  68 00000000 R		push OFFSET inputString
- 00000011  FF 35 00000012 R		push R0
- 00000017  68 00000009 R		push OFFSET outputString
- 0000001C  FF 35 00000016 R		push K
+ 00000011  FF 35 00000090 R		push R0
+ 00000017  68 00000048 R		push OFFSET outputString
+ 0000001C  FF 35 00000094 R		push K
 
  00000022  E8 00000007			call PseudoRandDecrypt
 
@@ -100,7 +126,7 @@ Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:39:30
  00000066			PseudoRandDecrypt ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 12.00.31101.0	    11/28/14 18:39:30
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/07/14 19:14:48
 +Psuedo Random Number Generator & Decryptio		     Symbols 2 - 1
 
 
@@ -194,7 +220,7 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000022 Para	  Public  'DATA'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000A0 Para	  Public  'DATA'	
 _TEXT  . . . . . . . . . . . . .	32 Bit	 00000066 Para	  Public  'CODE'	
 
 
@@ -402,10 +428,10 @@ INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h
 KBDOWN_FLAG  . . . . . . . . . .	Number	 00000001h   
 KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
-K  . . . . . . . . . . . . . . .	DWord	 00000016 _DATA	
+K  . . . . . . . . . . . . . . .	DWord	 00000094 _DATA	
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
-MAX_NUM_CHAR . . . . . . . . . .	DWord	 0000001E _DATA	
+MAX_NUM_CHAR . . . . . . . . . .	DWord	 0000009C _DATA	
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -438,7 +464,7 @@ NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
-R0 . . . . . . . . . . . . . . .	DWord	 00000012 _DATA	
+R0 . . . . . . . . . . . . . . .	DWord	 00000090 _DATA	
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
 ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
@@ -453,7 +479,7 @@ SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
 TAB  . . . . . . . . . . . . . .	Number	 00000009h   
 TRUE . . . . . . . . . . . . . .	Number	 00000001h   
 TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
-T  . . . . . . . . . . . . . . .	DWord	 0000001A _DATA	
+T  . . . . . . . . . . . . . . .	DWord	 00000098 _DATA	
 VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
 VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
 VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
@@ -550,7 +576,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-outputString . . . . . . . . . .	Byte	 00000009 _DATA	
+outputString . . . . . . . . . .	Byte	 00000048 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA

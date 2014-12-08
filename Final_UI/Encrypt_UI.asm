@@ -28,6 +28,9 @@ Separate n, e and d values
 &
 cPrompt		BYTE "Enter (0) for Encryption or (1) for Decryption: ", 0
 nPrompt		BYTE "Enter n value of the key: ", 0
+multPrompt	BYTE "Enter value for multiplier: ", 0
+countPrompt	BYTE "Enter value for counter: ", 0
+seedPrompt	BYTE "Enter value for seed: ", 0
 ePrompt	BYTE "Enter e value of the key: ", 0
 dPrompt	BYTE "Enter d value of the key: ", 0				;prompt only when decrypting(could be avoided if we store encrytion key values in a file)
 
@@ -82,6 +85,16 @@ align		DWORD
 manipData	BYTE	BUFFER DUP(?)
 align		DWORD
 
+
+COMMENT $
+---------------------------------
+Values for Random Generator
+---------------------------------
+$
+T DWORD 5
+K DWORD 13
+R0 DWORD 71
+
 .code
 main PROC
 
@@ -95,9 +108,10 @@ or decryption.
 Initial:
 mov edx, OFFSET cPrompt
 call WriteString
-mov edx, OFFSET choice
 call ReadInt
-cmp edx, 1
+cmp eax, 1
+
+
 je Decrypt
 
 COMMENT $
@@ -182,6 +196,14 @@ call Encryption PROC here
 -------------------------------------
 &
 
+	push T						; counter
+	push iByteCount
+	push OFFSET fileData
+	push R0						; seed
+	push OFFSET manipData
+	push K						; multiplier
+
+	call PseudoRandEncrypt
 
 COMMENT !
 ------------------------------------
@@ -231,8 +253,7 @@ mov edx, OFFSET iBuffer
 mov ecx, SIZEOF iBuffer
 call ReadString
 mov iByteCount, eax
-mov ebx, edx
-mov inFileName, ebx
+mov inFileName, edx
 
 COMMENT !
 ------------------------------------
@@ -247,8 +268,7 @@ mov edx, OFFSET oBuffer
 mov ecx, SIZEOF oBuffer
 call ReadString
 mov iByteCount, eax
-mov ebx, edx
-mov outFilename, ebx
+mov outFilename, edx
 
 COMMENT %
 -------------------------------------
@@ -275,11 +295,23 @@ call ReadFromFile
 jc	file_readError
 mov iByteCount, eax
 
+mov eax, fileHandle
+call CloseFile
+
 COMMENT &
 -------------------------------------
 call Decryption PROC here
 -------------------------------------
 &
+
+	push T						; counter
+	push iByteCount
+	push OFFSET fileData
+	push R0						; seed
+	push OFFSET manipData
+	push K						; multiplier
+
+	call PseudoRandDecrypt
 
 COMMENT !
 ------------------------------------
@@ -287,7 +319,7 @@ Create file and write to file
 ------------------------------------
 !
 
-mov edx, OFFSET outFilename
+mov edx, OFFSET oBuffer
 call CreateOutputFile
 mov fileHandle, eax
 mov edx, OFFSET manipData
@@ -328,6 +360,59 @@ Encrytion procedure
 -----------------------------
 !
 
+;--------------------------------------------------------------------------------
+PseudoRandEncrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _T:DWORD
+;Generates a random integer between 0 and (MAX_NUM_CHAR - 1).
+;Recieves: _K: K constant, _output: OFFSET outputString, _R0: Seed
+;		   _input: OFFSET inputString, _MAX: Max number of characters, _T: T constant
+;Returns:
+;--------------------------------------------------------------------------------
+	xor esi, esi				;esi = 0
+
+	mov eax, _R0
+	mov ebx, _input
+	mov ecx, _output
+
+L1:
+	mov edx, _K
+	mov edi, _T
+
+	mul edx						;edx:eax = R(0) * K
+	add eax, edi				;edx:eax = (R(0) * K) + T
+	div _MAX					;edx = ((R(0) * K) + T) % MAX_NUM_CHAR which is R(n)
+	mov eax, edx				;eax = "...see above..."
+
+	mov edi, ecx						;edi = OFFSET outputString
+	add edi, eax						;edi = OFFSET outputString + R(n)
+	xor edx, edx
+	mov dl, BYTE PTR [edi]				;edx = the character at R(n) location in outputString
+
+	;test edx, 110					;test with " " which is 20h which is 00100000b
+	;jnz ShouldWeLoop					;lets jump if there is something other than an empty space
+
+	push ebx
+
+	push ecx							;Let's take the next letter from inputString and put it in outputString
+	xor ecx, ecx
+	mov cl, BYTE PTR [ebx]
+	xor ebx, ebx
+	mov bl, cl
+	pop ecx
+
+	mov [edi], bl
+	inc esi
+
+	pop ebx
+	inc ebx
+
+ShouldWeLoop:							;now check if esi == MAX_NUM_CHAR then {we are done} else {loop again}
+	cmp esi, _MAX
+	je No
+	jmp L1
+No:
+	ret
+PseudoRandEncrypt ENDP
+
 Encryption PROC
 
 Encryption ENDP
@@ -338,6 +423,49 @@ COMMENT %
 Decryption procedure
 -----------------------------
 %
+
+;--------------------------------------------------------------------------------
+PseudoRandDecrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _T:DWORD
+;Generates random integers between 0 and (MAX_NUM_CHAR - 1) & decrypts a string.
+;Recieves: _K: K constant, _output: OFFSET outputString, _R0: Seed
+;		   _input: OFFSET inputString, _MAX: Max number of characters, _T: T constant
+;Returns:
+;--------------------------------------------------------------------------------
+	xor esi, esi				;esi = 0
+
+	mov eax, _R0
+	mov ebx, _output
+	mov ecx, _input
+
+L1:
+	mov edx, _K
+	mov edi, _T
+
+	mul edx						;edx:eax = R(0) * K
+	add eax, edi				;edx:eax = (R(0) * K) + T
+	div _MAX					;edx = ((R(0) * K) + T) % MAX_NUM_CHAR which is R(n)
+	mov eax, edx				;eax = "...see above..."
+
+	mov edi, ecx						;edi = OFFSET inputString
+	add edi, eax						;edi = OFFSET inputString + R(n)
+
+	push ecx							;Let's take the next letter from inputString and put it in outputString
+	xor ecx, ecx
+	mov cl, BYTE PTR [edi]
+
+	mov [ebx], cl
+	inc esi
+	inc ebx
+
+	pop ecx
+
+ShouldWeLoop:							;now check if esi == MAX_NUM_CHAR then {we are done} else {loop again}
+	cmp esi, _MAX
+	je No
+	jmp L1
+No:
+	ret
+PseudoRandDecrypt ENDP
 
 Decryption PROC
 

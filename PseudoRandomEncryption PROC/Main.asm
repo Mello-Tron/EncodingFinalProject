@@ -3,12 +3,12 @@ TITLE Psuedo Random Number Generator & Encryption
 INCLUDE Irvine32.inc
 							;R(n) = ((R(0) * K) + T) % MAX_NUM_CHAR
 .data
-inputString BYTE "apple&pie"
-outputString BYTE "         "
-R0 DWORD 4					;0 =< R(0) < MAX_NUM_CHAR
-K DWORD 4					;0 < K < MAX_NUM_CHAR			K-1 is divisble by all prime factors of MAX_NUM_CHAR, K-1 is multiple of 4, if MAX_NUM_CHAR is a multiple of 4
-T DWORD 7					;0 =< T < MAX_NUM_CHAR			MAX_NUM_CHAR and T are coprime
-MAX_NUM_CHAR DWORD 9		;whatever character count is
+inputString BYTE "012345678901234567890123456789012345678901234567890123456789012345678912"
+outputString BYTE "                                                                        "
+R0 DWORD 71					;0 =< R(0) < MAX_NUM_CHAR
+K DWORD 13					;0 < K < MAX_NUM_CHAR			K-1 is divisble by all prime factors of MAX_NUM_CHAR, K-1 is multiple of 4, if MAX_NUM_CHAR is a multiple of 4
+T DWORD 5					;0 =< T < MAX_NUM_CHAR			MAX_NUM_CHAR and T are coprime
+MAX_NUM_CHAR DWORD 72		;whatever character count is
 
 .code
 main PROC
