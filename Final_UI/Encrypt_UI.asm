@@ -130,8 +130,7 @@ mov edx, OFFSET iBuffer
 mov ecx, SIZEOF iBuffer
 call ReadString
 mov iByteCount, eax
-mov ebx, edx
-mov inFileName, ebx
+mov inFileName, edx
 
 COMMENT !
 ------------------------------------
@@ -146,8 +145,7 @@ mov edx, OFFSET oBuffer
 mov ecx, SIZEOF oBuffer
 call ReadString
 mov iByteCount, eax
-mov ebx, edx
-mov outFilename, ebx
+mov outFilename, edx
 
 COMMENT %
 -------------------------------------
@@ -191,7 +189,7 @@ Create file and write to file
 ------------------------------------
 !
 
-mov edx, OFFSET outFilename
+mov edx, OFFSET oBuffer
 call CreateOutputFile
 mov fileHandle, eax
 mov edx, OFFSET manipData

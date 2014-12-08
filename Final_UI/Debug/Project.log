@@ -1,8 +1,8 @@
-﻿Build started 11/21/2014 4:31:52 PM.
+﻿Build started 12/2/2014 3:03:56 PM.
      1>Project "Z:\CS278-Assembler\Final_UI\Project.vcxproj" on node 2 (Build target(s)).
      1>_MASM:
          Assembling Encrypt_UI.asm...
-         cmd.exe /C "C:\Users\jnuez16\AppData\Local\Temp\tmp956e460e8ed940e78c5c281979bbb854.cmd"
+         cmd.exe /C "C:\Users\jnuez16\AppData\Local\Temp\tmp375dac6589ff4a61b7998c9db6602942.cmd"
          ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\Encrypt_UI.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /TaEncrypt_UI.asm
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Z:\CS278-Assembler\Final_UI\Debug\Project.exe" /NOLOGO /LIBPATH:c:\Irvine user32.lib irvine32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Z:\CS278-Assembler\Final_UI\Debug\Project.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"Z:\CS278-Assembler\Final_UI\Debug\Project.lib" /MACHINE:X86 /SAFESEH:NO Debug\Encrypt_UI.obj
@@ -11,4 +11,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.43
+Time Elapsed 00:00:00.79
