@@ -19,6 +19,7 @@ inputError	BYTE "Error: File did not open!", 0
 readinError BYTE "Error: Cannot read from file!", 0
 writeError	BYTE "Error: Cannot write to file!", 0
 
+
 COMMENT &
 ---------------------------------
 Prompt for decrypt or encrypt
@@ -28,11 +29,12 @@ Separate n, e and d values
 &
 cPrompt		BYTE "Enter (0) for Encryption or (1) for Decryption: ", 0
 nPrompt		BYTE "Enter n value of the key: ", 0
-multPrompt	BYTE "Enter value for multiplier: ", 0
-countPrompt	BYTE "Enter value for counter: ", 0
-seedPrompt	BYTE "Enter value for seed: ", 0
+multPrompt	BYTE "Enter value for multiplier/counter: ", 0
 ePrompt	BYTE "Enter e value of the key: ", 0
 dPrompt	BYTE "Enter d value of the key: ", 0				;prompt only when decrypting(could be avoided if we store encrytion key values in a file)
+fileLengthMsg BYTE "Message Length: ", 0
+newLengthPrompt BYTE "New Message Length: ", 0
+
 
 choice		BYTE ?
 
@@ -91,9 +93,9 @@ COMMENT $
 Values for Random Generator
 ---------------------------------
 $
-T DWORD 5
-K DWORD 13
-R0 DWORD 71
+T DWORD ?
+K DWORD ?
+R0 DWORD ?
 
 .code
 main PROC
@@ -113,14 +115,13 @@ cmp eax, 1
 
 
 je Decrypt
-
 COMMENT $
 --------------------------------------
 Prompt the user for n value of the key
 and e value of the key
 --------------------------------------
 $
-
+call Clrscr
 mov edx, OFFSET nPrompt
 call WriteString
 call ReadInt
@@ -137,7 +138,7 @@ Prompt user for the input file name
 and store the file name
 ------------------------------------
 &
-
+call Clrscr
 mov edx, OFFSET inFilePrompt
 call WriteString
 mov edx, OFFSET iBuffer
@@ -195,6 +196,24 @@ COMMENT &
 call Encryption PROC here
 -------------------------------------
 &
+call Clrscr
+	
+	mov edx, OFFSET fileLengthMsg
+	call WriteString
+	mov eax, iByteCount
+	call WriteInt
+	call Crlf
+	mov edx, OFFSET newLengthPrompt
+	call WriteString
+	call ReadInt
+	mov iByteCount, eax
+	dec eax
+	mov R0, eax
+	mov edx, OFFSET multPrompt
+	call WriteString
+	call ReadInt
+	mov K, eax
+	mov T, eax
 
 	push T						; counter
 	push iByteCount
@@ -215,7 +234,7 @@ mov edx, OFFSET oBuffer
 call CreateOutputFile
 mov fileHandle, eax
 mov edx, OFFSET manipData
-mov ecx, BUFFER
+mov ecx, iByteCount
 call WriteToFile
 jc writeFalse_Error
 mov iByteCount, eax
@@ -229,7 +248,7 @@ exit
 
 
 Decrypt:
-
+call Clrscr
 mov edx, OFFSET nPrompt
 call WriteString
 call ReadInt
@@ -246,6 +265,7 @@ Prompt user for the input file name
 and store the file name
 ------------------------------------
 &
+call Clrscr
 
 mov edx, OFFSET inFilePrompt
 call WriteString
@@ -303,6 +323,24 @@ COMMENT &
 call Decryption PROC here
 -------------------------------------
 &
+call Clrscr
+
+	mov edx, OFFSET fileLengthMsg
+	call WriteString
+	mov eax, iByteCount
+	call WriteInt
+	call Crlf
+	mov edx, OFFSET newLengthPrompt
+	call WriteString
+	call ReadInt
+	mov iByteCount, eax
+	dec eax
+	mov R0, eax
+	mov edx, OFFSET multPrompt
+	call WriteString
+	call ReadInt
+	mov K, eax
+	mov T, eax
 
 	push T						; counter
 	push iByteCount
@@ -323,7 +361,7 @@ mov edx, OFFSET oBuffer
 call CreateOutputFile
 mov fileHandle, eax
 mov edx, OFFSET manipData
-mov ecx, BUFFER
+mov ecx, iByteCount
 call WriteToFile
 jc writeFalse_Error
 mov iByteCount, eax
