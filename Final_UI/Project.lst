@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:53:35
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 19:38:37
 Encryption UI (Encrypt_UI.asm				     Page 1 - 1
 
 
@@ -336,16 +336,16 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:53:35
 
  00000161			EncryptionLoop:
  00000161  51				push ecx
- 00000162  B8 00000000			mov eax, 0
- 00000167  8A 86 000126B0 R		mov al, [manipData+esi]
- 0000016D  8B 0D 00000127 R		mov ecx, encryptKey
+ 00000162  B8 00000000			mov eax, 0							; clear eax
+ 00000167  8A 86 000126B0 R		mov al, [manipData+esi]				; ManipData has scrambled string
+ 0000016D  8B 0D 00000127 R		mov ecx, encryptKey					; (evalue)
  00000173  8B 1D 00000123 R		mov ebx, nValue
  00000179  56				push esi
- 0000017A  E8 0000025F			call Encryption
+ 0000017A  E8 0000025F			call Encryption						; Returns encrypted DWORD in EAX
  0000017F  5E				pop esi
  00000180  A3 00016148 R		mov EncryptedByte, eax
  00000185  A1 00000171 R		mov eax, fileHandle
- 0000018A  B9 00000004			mov ecx, 4
+ 0000018A  B9 00000004			mov ecx, 4							; Write DWORD to file
  0000018F  BA 00016148 R		mov edx, OFFSET EncryptedByte
  00000194  E8 00000000 E		call WriteToFile
  00000199  46				inc esi
@@ -452,20 +452,20 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:53:35
 
  00000290  8B 0D 00000169 R		mov ecx, iByteCount
  00000296  BE 00000000			mov esi, 0
+
  0000029B				DecryptDataLoop:
  0000029B  51					push ecx
  0000029C  8B C6				mov eax, esi
  0000029E  BB 00000004				mov ebx, 4
  000002A3  F7 E3				mul ebx
- 000002A5  8B 98 00003C50 R			mov ebx, [EFileData+eax]
- 000002AB  8B C3				mov eax, ebx
-
- 000002AD  8B 1D 00000123 R			mov ebx, nValue
- 000002B3  8B 0D 0000012B R			mov ecx, decryptKey
+ 000002A5  8B 98 00003C50 R			mov ebx, [EFileData+eax]			; EAX is a multiple of 4 (EFileData has encrypted message)
+ 000002AB  8B C3				mov eax, ebx						; EAX now has encrypted byte
+ 000002AD  8B 1D 00000123 R			mov ebx, nValue						
+ 000002B3  8B 0D 0000012B R			mov ecx, decryptKey					; D Value
  000002B9  56					push esi
- 000002BA  E8 0000011F				call Encryption
+ 000002BA  E8 0000011F				call Encryption						; Returns decrypted character in al
  000002BF  5E					pop esi
- 000002C0  88 86 000001B8 R			mov [fileData+esi], al
+ 000002C0  88 86 000001B8 R			mov [fileData+esi], al				; FileData will be unscramble
 
  000002C6  46					inc esi
  000002C7  59					pop ecx
@@ -572,9 +572,6 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:53:35
  000003BE  33 D2			xor edx, edx
  000003C0  8A 17			mov dl, BYTE PTR [edi]				;edx = the character at R(n) location in outputString
 
-					;test edx, 110					;test with " " which is 20h which is 00100000b
-					;jnz ShouldWeLoop					;lets jump if there is something other than an empty space
-
  000003C2  53				push ebx
 
  000003C3  51				push ecx							;Let's take the next letter from inputString and put it in outputString
@@ -601,14 +598,26 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:53:35
  000003DB  C2 0018	   *	    ret    00018h
  000003DE			PseudoRandEncrypt ENDP
 
+				;-------------------------------------
+				; Encryption Procedure
+				;
+				; Takes:
+				; EAX: Byte needed to encrypt
+				; EBX: N value
+				; ECX; E value
+				;
+				; Returns:
+				; EAX: Encrypted DWORD
+				;--------------------------------------
+
  000003DE			Encryption PROC
- 000003DE  49				dec ecx
+ 000003DE  49				dec ecx					; value already ^ 1 so dec 1 in order to compensate
  000003DF  8B F0			mov esi, eax
- 000003E1				encryptIt:
+ 000003E1				encryptIt:				; PowerMod algorithm		char ^ e % N
  000003E1  F7 E6				mul esi
- 000003E3  F7 F3				div ebx
- 000003E5  8B C2				mov eax, edx
- 000003E7  BA 00000000				mov edx, 0
+ 000003E3  F7 F3				div ebx				; Remainder in EDX
+ 000003E5  8B C2				mov eax, edx		
+ 000003E7  BA 00000000				mov edx, 0			; Clear EDX
  000003EC  E2 F3			loop encryptIt
  000003EE  C3				ret
 
@@ -670,20 +679,32 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:53:35
  00000424  C2 0018	   *	    ret    00018h
  00000427			PseudoRandDecrypt ENDP
 
+				;-------------------------------------
+				; Decryption Procedure
+				;
+				; Takes:
+				; EAX: DWORD needed to decrypt
+				; EBX: N value
+				; ECX; D value
+				;
+				; Returns:
+				; AL: Decrypted character byte
+				;--------------------------------------
+
  00000427			Decryption PROC
- 00000427  49				dec ecx
+ 00000427  49				dec ecx					; value already ^ 1 so dec 1 in order to compensate
  00000428  8B F0			mov esi, eax
- 0000042A				decryptLoop:
+ 0000042A				decryptLoop:			; PowerMod algorithm		char ^ d % N
  0000042A  F7 E6				mul esi
- 0000042C  F7 F3				div ebx
+ 0000042C  F7 F3				div ebx				; Remainder in EDX
  0000042E  8B C2				mov eax, edx
- 00000430  BA 00000000				mov edx, 0
+ 00000430  BA 00000000				mov edx, 0			; Clear EDX
  00000435  E2 F3			loop decryptLoop
  00000437  C3				ret
  00000438			Decryption ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:53:35
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 19:38:37
 Encryption UI (Encrypt_UI.asm				     Symbols 2 - 1
 
 

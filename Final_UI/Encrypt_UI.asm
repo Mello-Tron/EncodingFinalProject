@@ -241,16 +241,16 @@ mov ecx, iByteCount
 
 EncryptionLoop:
 	push ecx
-	mov eax, 0
-	mov al, [manipData+esi]
-	mov ecx, encryptKey
+	mov eax, 0							; clear eax
+	mov al, [manipData+esi]				; ManipData has scrambled string
+	mov ecx, encryptKey					; (evalue)
 	mov ebx, nValue
 	push esi
-	call Encryption
+	call Encryption						; Returns encrypted DWORD in EAX
 	pop esi
 	mov EncryptedByte, eax
 	mov eax, fileHandle
-	mov ecx, 4
+	mov ecx, 4							; Write DWORD to file
 	mov edx, OFFSET EncryptedByte
 	call WriteToFile
 	inc esi
@@ -355,20 +355,20 @@ call Clrscr
 
 	mov ecx, iByteCount
 	mov esi, 0
+
 	DecryptDataLoop:
 		push ecx
 		mov eax, esi
 		mov ebx, 4
 		mul ebx
-		mov ebx, [EFileData+eax]
-		mov eax, ebx
-
-		mov ebx, nValue
-		mov ecx, decryptKey
+		mov ebx, [EFileData+eax]			; EAX is a multiple of 4 (EFileData has encrypted message)
+		mov eax, ebx						; EAX now has encrypted byte
+		mov ebx, nValue						
+		mov ecx, decryptKey					; D Value
 		push esi
-		call Encryption
+		call Encryption						; Returns decrypted character in al
 		pop esi
-		mov [fileData+esi], al
+		mov [fileData+esi], al				; FileData will be unscramble
 
 		inc esi
 		pop ecx
@@ -470,9 +470,6 @@ L1:
 	xor edx, edx
 	mov dl, BYTE PTR [edi]				;edx = the character at R(n) location in outputString
 
-	;test edx, 110						;test with " " which is 20h which is 00100000b
-	;jnz ShouldWeLoop					;lets jump if there is something other than an empty space
-
 	push ebx
 
 	push ecx							;Let's take the next letter from inputString and put it in outputString
@@ -496,14 +493,26 @@ No:
 	ret
 PseudoRandEncrypt ENDP
 
+;-------------------------------------
+; Encryption Procedure
+;
+; Takes:
+; EAX: Byte needed to encrypt
+; EBX: N value
+; ECX; E value
+;
+; Returns:
+; EAX: Encrypted DWORD
+;--------------------------------------
+
 Encryption PROC
-	dec ecx
+	dec ecx					; value already ^ 1 so dec 1 in order to compensate
 	mov esi, eax
-	encryptIt:
+	encryptIt:				; PowerMod algorithm		char ^ e % N
 		mul esi
-		div ebx
-		mov eax, edx
-		mov edx, 0
+		div ebx				; Remainder in EDX
+		mov eax, edx		
+		mov edx, 0			; Clear EDX
 	loop encryptIt
 	ret
 
@@ -559,14 +568,26 @@ No:
 	ret
 PseudoRandDecrypt ENDP
 
+;-------------------------------------
+; Decryption Procedure
+;
+; Takes:
+; EAX: DWORD needed to decrypt
+; EBX: N value
+; ECX; D value
+;
+; Returns:
+; AL: Decrypted character byte
+;--------------------------------------
+
 Decryption PROC
-	dec ecx
+	dec ecx					; value already ^ 1 so dec 1 in order to compensate
 	mov esi, eax
-	decryptLoop:
+	decryptLoop:			; PowerMod algorithm		char ^ d % N
 		mul esi
-		div ebx
+		div ebx				; Remainder in EDX
 		mov eax, edx
-		mov edx, 0
+		mov edx, 0			; Clear EDX
 	loop decryptLoop
 	ret
 Decryption ENDP
