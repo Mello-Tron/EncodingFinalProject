@@ -83,9 +83,11 @@ encryption
 !
 
 fileData	BYTE	BUFFER DUP(?)
+EFileData	DWORD	BUFFER DUP(?)
 align		DWORD
 manipData	BYTE	BUFFER DUP(?)
 align		DWORD
+EncryptedByte DWORD ?
 
 
 COMMENT $
@@ -230,12 +232,32 @@ Create file and write to file
 ------------------------------------
 !
 
+
 mov edx, OFFSET oBuffer
 call CreateOutputFile
 mov fileHandle, eax
-mov edx, OFFSET manipData
+
 mov ecx, iByteCount
-call WriteToFile
+
+EncryptionLoop:
+	push ecx
+	mov eax, 0
+	mov al, [manipData+esi]
+	mov ecx, encryptKey
+	mov ebx, nValue
+	push esi
+	call Encryption
+	pop esi
+	mov EncryptedByte, eax
+	call WriteInt
+	mov eax, fileHandle
+	mov ecx, 4
+	mov edx, OFFSET EncryptedByte
+	call WriteToFile
+	inc esi
+	pop ecx
+loop EncryptionLoop
+
 jc writeFalse_Error
 mov iByteCount, eax
 
@@ -309,10 +331,13 @@ Read from file
 $
 
 mov eax, fileHandle
-mov edx, OFFSET fileData
+mov edx, OFFSET EFileData
 mov ecx, BUFFER
 call ReadFromFile
 jc	file_readError
+mov edx, 0
+mov ebx, 4
+div ebx
 mov iByteCount, eax
 
 mov eax, fileHandle
@@ -324,6 +349,27 @@ call Decryption PROC here
 -------------------------------------
 &
 call Clrscr
+
+	mov ecx, iByteCount
+	mov esi, 0
+	DecryptDataLoop:
+		push ecx
+		mov eax, esi
+		mov ebx, 4
+		mul ebx
+		mov ebx, [EFileData+eax]
+		mov eax, ebx
+
+		mov ebx, nValue
+		mov ecx, decryptKey
+		push esi
+		call Encryption
+		pop esi
+		mov [fileData+esi], al
+
+		inc esi
+		pop ecx
+	loop DecryptDataloop
 
 	mov edx, OFFSET fileLengthMsg
 	call WriteString
@@ -452,6 +498,15 @@ No:
 PseudoRandEncrypt ENDP
 
 Encryption PROC
+	dec ecx
+	mov esi, eax
+	encryptIt:
+		mul esi
+		div ebx
+		mov eax, edx
+		mov edx, 0
+	loop encryptIt
+	ret
 
 Encryption ENDP
 
@@ -506,7 +561,15 @@ No:
 PseudoRandDecrypt ENDP
 
 Decryption PROC
-
+	dec ecx
+	mov esi, eax
+	decryptLoop:
+		mul esi
+		div ebx
+		mov eax, edx
+		mov edx, 0
+	loop decryptLoop
+	ret
 Decryption ENDP
 
 END main

@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 17:51:07
 Encryption UI (Encrypt_UI.asm				     Page 1 - 1
 
 
@@ -174,11 +174,15 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
  000001B8  00003A98 [		fileData	BYTE	BUFFER DUP(?)
 	    00
 	   ]
+ 00003C50  00003A98 [		EFileData	DWORD	BUFFER DUP(?)
+	    00000000
+	   ]
 				align		DWORD
- 00003C50  00003A98 [		manipData	BYTE	BUFFER DUP(?)
+ 000126B0  00003A98 [		manipData	BYTE	BUFFER DUP(?)
 	    00
 	   ]
 				align		DWORD
+ 00016148 00000000		EncryptedByte DWORD ?
 
 
 				COMMENT $
@@ -186,9 +190,9 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				Values for Random Generator
 				---------------------------------
 				$
- 000076E8 00000000		T DWORD ?
- 000076EC 00000000		K DWORD ?
- 000076F0 00000000		R0 DWORD ?
+ 0001614C 00000000		T DWORD ?
+ 00016150 00000000		K DWORD ?
+ 00016154 00000000		R0 DWORD ?
 
  00000000			.code
  00000000			main PROC
@@ -207,7 +211,7 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
  0000000F  83 F8 01		cmp eax, 1
 
 
- 00000012  0F 84 0000016F	je Decrypt
+ 00000012  0F 84 000001A6	je Decrypt
 				COMMENT $
 				--------------------------------------
 				Prompt the user for n value of the key
@@ -264,7 +268,7 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
  00000092  8B 15 0000016D R	mov edx, inFileName
  00000098  E8 00000000 E	call OpenInputFile
  0000009D  83 F8 FF		cmp eax, INVALID_HANDLE_VALUE
- 000000A0  0F 84 0000024C	je OpenFileError
+ 000000A0  0F 84 000002C9	je OpenFileError
  000000A6  A3 00000171 R	mov fileHandle, eax
 
 				COMMENT $
@@ -277,7 +281,7 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
  000000B0  BA 000001B8 R	mov edx, OFFSET fileData
  000000B5  B9 00003A98		mov ecx, BUFFER
  000000BA  E8 00000000 E	call ReadFromFile
- 000000BF  0F 82 00000241	jc	file_readError
+ 000000BF  0F 82 000002BE	jc	file_readError
  000000C5  A3 00000169 R	mov iByteCount, eax
 
  000000CA  A1 00000171 R	mov eax, fileHandle
@@ -301,21 +305,21 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
  000000FC  E8 00000000 E		call ReadInt
  00000101  A3 00000169 R		mov iByteCount, eax
  00000106  48				dec eax
- 00000107  A3 000076F0 R		mov R0, eax
+ 00000107  A3 00016154 R		mov R0, eax
  0000010C  BA 000000A1 R		mov edx, OFFSET multPrompt
  00000111  E8 00000000 E		call WriteString
  00000116  E8 00000000 E		call ReadInt
- 0000011B  A3 000076EC R		mov K, eax
- 00000120  A3 000076E8 R		mov T, eax
+ 0000011B  A3 00016150 R		mov K, eax
+ 00000120  A3 0001614C R		mov T, eax
 
- 00000125  FF 35 000076E8 R		push T						; counter
+ 00000125  FF 35 0001614C R		push T						; counter
  0000012B  FF 35 00000169 R		push iByteCount
  00000131  68 000001B8 R		push OFFSET fileData
- 00000136  FF 35 000076F0 R		push R0						; seed
- 0000013C  68 00003C50 R		push OFFSET manipData
- 00000141  FF 35 000076EC R		push K						; multiplier
+ 00000136  FF 35 00016154 R		push R0						; seed
+ 0000013C  68 000126B0 R		push OFFSET manipData
+ 00000141  FF 35 00016150 R		push K						; multiplier
 
- 00000147  E8 000001E2			call PseudoRandEncrypt
+ 00000147  E8 0000025F			call PseudoRandEncrypt
 
 				COMMENT !
 				------------------------------------
@@ -323,36 +327,56 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				------------------------------------
 				!
 
+
  0000014C  BA 00000196 R	mov edx, OFFSET oBuffer
  00000151  E8 00000000 E	call CreateOutputFile
  00000156  A3 00000171 R	mov fileHandle, eax
- 0000015B  BA 00003C50 R	mov edx, OFFSET manipData
- 00000160  8B 0D 00000169 R	mov ecx, iByteCount
- 00000166  E8 00000000 E	call WriteToFile
- 0000016B  0F 82 000001A9	jc writeFalse_Error
- 00000171  A3 00000169 R	mov iByteCount, eax
 
- 00000176  A1 00000171 R	mov eax, fileHandle
- 0000017B  E8 00000000 E	call CloseFile
+ 0000015B  8B 0D 00000169 R	mov ecx, iByteCount
+
+ 00000161			EncryptionLoop:
+ 00000161  51				push ecx
+ 00000162  B8 00000000			mov eax, 0
+ 00000167  8A 86 000126B0 R		mov al, [manipData+esi]
+ 0000016D  8B 0D 00000127 R		mov ecx, encryptKey
+ 00000173  8B 1D 00000123 R		mov ebx, nValue
+ 00000179  56				push esi
+ 0000017A  E8 0000026E			call Encryption
+ 0000017F  5E				pop esi
+ 00000180  A3 00016148 R		mov EncryptedByte, eax
+ 00000185  E8 00000000 E		call WriteInt
+ 0000018A  A1 00000171 R		mov eax, fileHandle
+ 0000018F  B9 00000004			mov ecx, 4
+ 00000194  BA 00016148 R		mov edx, OFFSET EncryptedByte
+ 00000199  E8 00000000 E		call WriteToFile
+ 0000019E  46				inc esi
+ 0000019F  59				pop ecx
+ 000001A0  E2 BF		loop EncryptionLoop
+
+ 000001A2  0F 82 000001EF	jc writeFalse_Error
+ 000001A8  A3 00000169 R	mov iByteCount, eax
+
+ 000001AD  A1 00000171 R	mov eax, fileHandle
+ 000001B2  E8 00000000 E	call CloseFile
 
 				exit
- 00000180  6A 00	   *	    push   +000000000h
- 00000182  E8 00000000 E   *	    call   ExitProcess
+ 000001B7  6A 00	   *	    push   +000000000h
+ 000001B9  E8 00000000 E   *	    call   ExitProcess
 
 
 
 
- 00000187			Decrypt:
- 00000187  E8 00000000 E	call Clrscr
- 0000018C  BA 00000086 R	mov edx, OFFSET nPrompt
- 00000191  E8 00000000 E	call WriteString
- 00000196  E8 00000000 E	call ReadInt
- 0000019B  A3 00000123 R	mov nValue, eax
+ 000001BE			Decrypt:
+ 000001BE  E8 00000000 E	call Clrscr
+ 000001C3  BA 00000086 R	mov edx, OFFSET nPrompt
+ 000001C8  E8 00000000 E	call WriteString
+ 000001CD  E8 00000000 E	call ReadInt
+ 000001D2  A3 00000123 R	mov nValue, eax
 
- 000001A0  BA 000000E1 R	mov edx, OFFSET dPrompt
- 000001A5  E8 00000000 E	call WriteString
- 000001AA  E8 00000000 E	call ReadInt
- 000001AF  A3 0000012B R	mov decryptKey, eax
+ 000001D7  BA 000000E1 R	mov edx, OFFSET dPrompt
+ 000001DC  E8 00000000 E	call WriteString
+ 000001E1  E8 00000000 E	call ReadInt
+ 000001E6  A3 0000012B R	mov decryptKey, eax
 
 				COMMENT &
 				------------------------------------
@@ -360,15 +384,15 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				and store the file name
 				------------------------------------
 				&
- 000001B4  E8 00000000 E	call Clrscr
+ 000001EB  E8 00000000 E	call Clrscr
 
- 000001B9  BA 0000012F R	mov edx, OFFSET inFilePrompt
- 000001BE  E8 00000000 E	call WriteString
- 000001C3  BA 0000014B R	mov edx, OFFSET iBuffer
- 000001C8  B9 0000001E		mov ecx, SIZEOF iBuffer
- 000001CD  E8 00000000 E	call ReadString
- 000001D2  A3 00000169 R	mov iByteCount, eax
- 000001D7  89 15 0000016D R	mov inFileName, edx
+ 000001F0  BA 0000012F R	mov edx, OFFSET inFilePrompt
+ 000001F5  E8 00000000 E	call WriteString
+ 000001FA  BA 0000014B R	mov edx, OFFSET iBuffer
+ 000001FF  B9 0000001E		mov ecx, SIZEOF iBuffer
+ 00000204  E8 00000000 E	call ReadString
+ 00000209  A3 00000169 R	mov iByteCount, eax
+ 0000020E  89 15 0000016D R	mov inFileName, edx
 
 				COMMENT !
 				------------------------------------
@@ -377,13 +401,13 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				------------------------------------
 				!
 
- 000001DD  BA 00000175 R	mov edx, OFFSET outFilePrompt
- 000001E2  E8 00000000 E	call WriteString
- 000001E7  BA 00000196 R	mov edx, OFFSET oBuffer
- 000001EC  B9 0000001E		mov ecx, SIZEOF oBuffer
- 000001F1  E8 00000000 E	call ReadString
- 000001F6  A3 00000169 R	mov iByteCount, eax
- 000001FB  89 15 000001B4 R	mov outFilename, edx
+ 00000214  BA 00000175 R	mov edx, OFFSET outFilePrompt
+ 00000219  E8 00000000 E	call WriteString
+ 0000021E  BA 00000196 R	mov edx, OFFSET oBuffer
+ 00000223  B9 0000001E		mov ecx, SIZEOF oBuffer
+ 00000228  E8 00000000 E	call ReadString
+ 0000022D  A3 00000169 R	mov iByteCount, eax
+ 00000232  89 15 000001B4 R	mov outFilename, edx
 
 				COMMENT %
 				-------------------------------------
@@ -391,11 +415,11 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				-------------------------------------
 				%
 
- 00000201  8B 15 0000016D R	mov edx, inFileName
- 00000207  E8 00000000 E	call OpenInputFile
- 0000020C  83 F8 FF		cmp eax, INVALID_HANDLE_VALUE
- 0000020F  0F 84 000000DD	je OpenFileError
- 00000215  A3 00000171 R	mov fileHandle, eax
+ 00000238  8B 15 0000016D R	mov edx, inFileName
+ 0000023E  E8 00000000 E	call OpenInputFile
+ 00000243  83 F8 FF		cmp eax, INVALID_HANDLE_VALUE
+ 00000246  0F 84 00000123	je OpenFileError
+ 0000024C  A3 00000171 R	mov fileHandle, eax
 
 				COMMENT $
 				------------------------------------
@@ -403,48 +427,72 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				------------------------------------
 				$
 
- 0000021A  A1 00000171 R	mov eax, fileHandle
- 0000021F  BA 000001B8 R	mov edx, OFFSET fileData
- 00000224  B9 00003A98		mov ecx, BUFFER
- 00000229  E8 00000000 E	call ReadFromFile
- 0000022E  0F 82 000000D2	jc	file_readError
- 00000234  A3 00000169 R	mov iByteCount, eax
+ 00000251  A1 00000171 R	mov eax, fileHandle
+ 00000256  BA 00003C50 R	mov edx, OFFSET EFileData
+ 0000025B  B9 00003A98		mov ecx, BUFFER
+ 00000260  E8 00000000 E	call ReadFromFile
+ 00000265  0F 82 00000118	jc	file_readError
+ 0000026B  BA 00000000		mov edx, 0
+ 00000270  BB 00000004		mov ebx, 4
+ 00000275  F7 F3		div ebx
+ 00000277  A3 00000169 R	mov iByteCount, eax
 
- 00000239  A1 00000171 R	mov eax, fileHandle
- 0000023E  E8 00000000 E	call CloseFile
+ 0000027C  A1 00000171 R	mov eax, fileHandle
+ 00000281  E8 00000000 E	call CloseFile
 
 				COMMENT &
 				-------------------------------------
 				call Decryption PROC here
 				-------------------------------------
 				&
- 00000243  E8 00000000 E	call Clrscr
+ 00000286  E8 00000000 E	call Clrscr
 
- 00000248  BA 000000FC R		mov edx, OFFSET fileLengthMsg
- 0000024D  E8 00000000 E		call WriteString
- 00000252  A1 00000169 R		mov eax, iByteCount
- 00000257  E8 00000000 E		call WriteInt
- 0000025C  E8 00000000 E		call Crlf
- 00000261  BA 0000010D R		mov edx, OFFSET newLengthPrompt
- 00000266  E8 00000000 E		call WriteString
- 0000026B  E8 00000000 E		call ReadInt
- 00000270  A3 00000169 R		mov iByteCount, eax
- 00000275  48				dec eax
- 00000276  A3 000076F0 R		mov R0, eax
- 0000027B  BA 000000A1 R		mov edx, OFFSET multPrompt
- 00000280  E8 00000000 E		call WriteString
- 00000285  E8 00000000 E		call ReadInt
- 0000028A  A3 000076EC R		mov K, eax
- 0000028F  A3 000076E8 R		mov T, eax
+ 0000028B  8B 0D 00000169 R		mov ecx, iByteCount
+ 00000291  BE 00000000			mov esi, 0
+ 00000296				DecryptDataLoop:
+ 00000296  51					push ecx
+ 00000297  8B C6				mov eax, esi
+ 00000299  BB 00000004				mov ebx, 4
+ 0000029E  F7 E3				mul ebx
+ 000002A0  8B 98 00003C50 R			mov ebx, [EFileData+eax]
+ 000002A6  8B C3				mov eax, ebx
 
- 00000294  FF 35 000076E8 R		push T						; counter
- 0000029A  FF 35 00000169 R		push iByteCount
- 000002A0  68 000001B8 R		push OFFSET fileData
- 000002A5  FF 35 000076F0 R		push R0						; seed
- 000002AB  68 00003C50 R		push OFFSET manipData
- 000002B0  FF 35 000076EC R		push K						; multiplier
+ 000002A8  8B 1D 00000123 R			mov ebx, nValue
+ 000002AE  8B 0D 0000012B R			mov ecx, decryptKey
+ 000002B4  56					push esi
+ 000002B5  E8 00000133				call Encryption
+ 000002BA  5E					pop esi
+ 000002BB  88 86 000001B8 R			mov [fileData+esi], al
 
- 000002B6  E8 000000B5			call PseudoRandDecrypt
+ 000002C1  46					inc esi
+ 000002C2  59					pop ecx
+ 000002C3  E2 D1			loop DecryptDataloop
+
+ 000002C5  BA 000000FC R		mov edx, OFFSET fileLengthMsg
+ 000002CA  E8 00000000 E		call WriteString
+ 000002CF  A1 00000169 R		mov eax, iByteCount
+ 000002D4  E8 00000000 E		call WriteInt
+ 000002D9  E8 00000000 E		call Crlf
+ 000002DE  BA 0000010D R		mov edx, OFFSET newLengthPrompt
+ 000002E3  E8 00000000 E		call WriteString
+ 000002E8  E8 00000000 E		call ReadInt
+ 000002ED  A3 00000169 R		mov iByteCount, eax
+ 000002F2  48				dec eax
+ 000002F3  A3 00016154 R		mov R0, eax
+ 000002F8  BA 000000A1 R		mov edx, OFFSET multPrompt
+ 000002FD  E8 00000000 E		call WriteString
+ 00000302  E8 00000000 E		call ReadInt
+ 00000307  A3 00016150 R		mov K, eax
+ 0000030C  A3 0001614C R		mov T, eax
+
+ 00000311  FF 35 0001614C R		push T						; counter
+ 00000317  FF 35 00000169 R		push iByteCount
+ 0000031D  68 000001B8 R		push OFFSET fileData
+ 00000322  FF 35 00016154 R		push R0						; seed
+ 00000328  68 000126B0 R		push OFFSET manipData
+ 0000032D  FF 35 00016150 R		push K						; multiplier
+
+ 00000333  E8 000000C6			call PseudoRandDecrypt
 
 				COMMENT !
 				------------------------------------
@@ -452,42 +500,42 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				------------------------------------
 				!
 
- 000002BB  BA 00000196 R	mov edx, OFFSET oBuffer
- 000002C0  E8 00000000 E	call CreateOutputFile
- 000002C5  A3 00000171 R	mov fileHandle, eax
- 000002CA  BA 00003C50 R	mov edx, OFFSET manipData
- 000002CF  8B 0D 00000169 R	mov ecx, iByteCount
- 000002D5  E8 00000000 E	call WriteToFile
- 000002DA  72 3E		jc writeFalse_Error
- 000002DC  A3 00000169 R	mov iByteCount, eax
+ 00000338  BA 00000196 R	mov edx, OFFSET oBuffer
+ 0000033D  E8 00000000 E	call CreateOutputFile
+ 00000342  A3 00000171 R	mov fileHandle, eax
+ 00000347  BA 000126B0 R	mov edx, OFFSET manipData
+ 0000034C  8B 0D 00000169 R	mov ecx, iByteCount
+ 00000352  E8 00000000 E	call WriteToFile
+ 00000357  72 3E		jc writeFalse_Error
+ 00000359  A3 00000169 R	mov iByteCount, eax
 
- 000002E1  A1 00000171 R	mov eax, fileHandle
- 000002E6  E8 00000000 E	call CloseFile
+ 0000035E  A1 00000171 R	mov eax, fileHandle
+ 00000363  E8 00000000 E	call CloseFile
 
 				exit
- 000002EB  6A 00	   *	    push   +000000000h
- 000002ED  E8 00000000 E   *	    call   ExitProcess
+ 00000368  6A 00	   *	    push   +000000000h
+ 0000036A  E8 00000000 E   *	    call   ExitProcess
 
 
- 000002F2			OpenFileError:
- 000002F2  BA 00000000 R		mov edx, OFFSET inputError
- 000002F7  E8 00000000 E		call WriteString
- 000002FC  E8 00000000 E		call Crlf
- 00000301  E9 FFFFFCFA			jmp Initial							; goes to the beginning of the program
+ 0000036F			OpenFileError:
+ 0000036F  BA 00000000 R		mov edx, OFFSET inputError
+ 00000374  E8 00000000 E		call WriteString
+ 00000379  E8 00000000 E		call Crlf
+ 0000037E  E9 FFFFFC7D			jmp Initial							; goes to the beginning of the program
 
- 00000306			file_readError:
- 00000306  BA 0000001A R		mov edx, OFFSET readinError
- 0000030B  E8 00000000 E		call WriteString
- 00000310  E8 00000000 E		call Crlf
- 00000315  E9 FFFFFCE6			jmp Initial							; goes to the beginning of the program
+ 00000383			file_readError:
+ 00000383  BA 0000001A R		mov edx, OFFSET readinError
+ 00000388  E8 00000000 E		call WriteString
+ 0000038D  E8 00000000 E		call Crlf
+ 00000392  E9 FFFFFC69			jmp Initial							; goes to the beginning of the program
 
- 0000031A			writeFalse_Error:
- 0000031A  BA 00000038 R		mov edx, OFFSET writeError
- 0000031F  E8 00000000 E		call WriteString
- 00000324  E8 00000000 E		call Crlf
- 00000329  E9 FFFFFCD2			jmp Initial
+ 00000397			writeFalse_Error:
+ 00000397  BA 00000038 R		mov edx, OFFSET writeError
+ 0000039C  E8 00000000 E		call WriteString
+ 000003A1  E8 00000000 E		call Crlf
+ 000003A6  E9 FFFFFC55			jmp Initial
 
- 0000032E			main ENDP
+ 000003AB			main ENDP
 
 				COMMENT !
 				-----------------------------
@@ -496,67 +544,76 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				!
 
 				;--------------------------------------------------------------------------------
- 0000032E			PseudoRandEncrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _T:DWORD
+ 000003AB			PseudoRandEncrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _T:DWORD
 				;Generates a random integer between 0 and (MAX_NUM_CHAR - 1).
 				;Recieves: _K: K constant, _output: OFFSET outputString, _R0: Seed
 				;		   _input: OFFSET inputString, _MAX: Max number of characters, _T: T constant
 				;Returns:
 				;--------------------------------------------------------------------------------
- 0000032E  55		   *	    push   ebp
- 0000032F  8B EC	   *	    mov    ebp, esp
- 00000331  56		   *	    push   esi
- 00000332  33 F6			xor esi, esi				;esi = 0
+ 000003AB  55		   *	    push   ebp
+ 000003AC  8B EC	   *	    mov    ebp, esp
+ 000003AE  56		   *	    push   esi
+ 000003AF  33 F6			xor esi, esi				;esi = 0
 
- 00000334  8B 45 10			mov eax, _R0
- 00000337  8B 5D 14			mov ebx, _input
- 0000033A  8B 4D 0C			mov ecx, _output
+ 000003B1  8B 45 10			mov eax, _R0
+ 000003B4  8B 5D 14			mov ebx, _input
+ 000003B7  8B 4D 0C			mov ecx, _output
 
- 0000033D			L1:
- 0000033D  8B 55 08			mov edx, _K
- 00000340  8B 7D 1C			mov edi, _T
+ 000003BA			L1:
+ 000003BA  8B 55 08			mov edx, _K
+ 000003BD  8B 7D 1C			mov edi, _T
 
- 00000343  F7 E2			mul edx						;edx:eax = R(0) * K
- 00000345  03 C7			add eax, edi				;edx:eax = (R(0) * K) + T
- 00000347  F7 75 18			div _MAX					;edx = ((R(0) * K) + T) % MAX_NUM_CHAR which is R(n)
- 0000034A  8B C2			mov eax, edx				;eax = "...see above..."
+ 000003C0  F7 E2			mul edx						;edx:eax = R(0) * K
+ 000003C2  03 C7			add eax, edi				;edx:eax = (R(0) * K) + T
+ 000003C4  F7 75 18			div _MAX					;edx = ((R(0) * K) + T) % MAX_NUM_CHAR which is R(n)
+ 000003C7  8B C2			mov eax, edx				;eax = "...see above..."
 
- 0000034C  8B F9			mov edi, ecx						;edi = OFFSET outputString
- 0000034E  03 F8			add edi, eax						;edi = OFFSET outputString + R(n)
- 00000350  33 D2			xor edx, edx
- 00000352  8A 17			mov dl, BYTE PTR [edi]				;edx = the character at R(n) location in outputString
+ 000003C9  8B F9			mov edi, ecx						;edi = OFFSET outputString
+ 000003CB  03 F8			add edi, eax						;edi = OFFSET outputString + R(n)
+ 000003CD  33 D2			xor edx, edx
+ 000003CF  8A 17			mov dl, BYTE PTR [edi]				;edx = the character at R(n) location in outputString
 
 					;test edx, 110					;test with " " which is 20h which is 00100000b
 					;jnz ShouldWeLoop					;lets jump if there is something other than an empty space
 
- 00000354  53				push ebx
+ 000003D1  53				push ebx
 
- 00000355  51				push ecx							;Let's take the next letter from inputString and put it in outputString
- 00000356  33 C9			xor ecx, ecx
- 00000358  8A 0B			mov cl, BYTE PTR [ebx]
- 0000035A  33 DB			xor ebx, ebx
- 0000035C  8A D9			mov bl, cl
- 0000035E  59				pop ecx
+ 000003D2  51				push ecx							;Let's take the next letter from inputString and put it in outputString
+ 000003D3  33 C9			xor ecx, ecx
+ 000003D5  8A 0B			mov cl, BYTE PTR [ebx]
+ 000003D7  33 DB			xor ebx, ebx
+ 000003D9  8A D9			mov bl, cl
+ 000003DB  59				pop ecx
 
- 0000035F  88 1F			mov [edi], bl
- 00000361  46				inc esi
+ 000003DC  88 1F			mov [edi], bl
+ 000003DE  46				inc esi
 
- 00000362  5B				pop ebx
- 00000363  43				inc ebx
+ 000003DF  5B				pop ebx
+ 000003E0  43				inc ebx
 
- 00000364			ShouldWeLoop:							;now check if esi == MAX_NUM_CHAR then {we are done} else {loop again}
- 00000364  3B 75 18			cmp esi, _MAX
- 00000367  74 02			je No
- 00000369  EB D2			jmp L1
- 0000036B			No:
+ 000003E1			ShouldWeLoop:							;now check if esi == MAX_NUM_CHAR then {we are done} else {loop again}
+ 000003E1  3B 75 18			cmp esi, _MAX
+ 000003E4  74 02			je No
+ 000003E6  EB D2			jmp L1
+ 000003E8			No:
 					ret
- 0000036B  5E		   *	    pop    esi
- 0000036C  C9		   *	    leave  
- 0000036D  C2 0018	   *	    ret    00018h
- 00000370			PseudoRandEncrypt ENDP
+ 000003E8  5E		   *	    pop    esi
+ 000003E9  C9		   *	    leave  
+ 000003EA  C2 0018	   *	    ret    00018h
+ 000003ED			PseudoRandEncrypt ENDP
 
- 00000370			Encryption PROC
+ 000003ED			Encryption PROC
+ 000003ED  49				dec ecx
+ 000003EE  8B F0			mov esi, eax
+ 000003F0				encryptIt:
+ 000003F0  F7 E6				mul esi
+ 000003F2  F7 F3				div ebx
+ 000003F4  8B C2				mov eax, edx
+ 000003F6  BA 00000000				mov edx, 0
+ 000003FB  E2 F3			loop encryptIt
+ 000003FD  C3				ret
 
- 00000370			Encryption ENDP
+ 000003FE			Encryption ENDP
 
 
 				COMMENT %
@@ -566,60 +623,68 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
 				%
 
 				;--------------------------------------------------------------------------------
- 00000370			PseudoRandDecrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _T:DWORD
+ 000003FE			PseudoRandDecrypt PROC USES esi, _K:DWORD, _output:DWORD, _R0:DWORD, _input:DWORD, _MAX:DWORD, _T:DWORD
 				;Generates random integers between 0 and (MAX_NUM_CHAR - 1) & decrypts a string.
 				;Recieves: _K: K constant, _output: OFFSET outputString, _R0: Seed
 				;		   _input: OFFSET inputString, _MAX: Max number of characters, _T: T constant
 				;Returns:
 				;--------------------------------------------------------------------------------
- 00000370  55		   *	    push   ebp
- 00000371  8B EC	   *	    mov    ebp, esp
- 00000373  56		   *	    push   esi
- 00000374  33 F6			xor esi, esi				;esi = 0
+ 000003FE  55		   *	    push   ebp
+ 000003FF  8B EC	   *	    mov    ebp, esp
+ 00000401  56		   *	    push   esi
+ 00000402  33 F6			xor esi, esi				;esi = 0
 
- 00000376  8B 45 10			mov eax, _R0
- 00000379  8B 5D 0C			mov ebx, _output
- 0000037C  8B 4D 14			mov ecx, _input
+ 00000404  8B 45 10			mov eax, _R0
+ 00000407  8B 5D 0C			mov ebx, _output
+ 0000040A  8B 4D 14			mov ecx, _input
 
- 0000037F			L1:
- 0000037F  8B 55 08			mov edx, _K
- 00000382  8B 7D 1C			mov edi, _T
+ 0000040D			L1:
+ 0000040D  8B 55 08			mov edx, _K
+ 00000410  8B 7D 1C			mov edi, _T
 
- 00000385  F7 E2			mul edx						;edx:eax = R(0) * K
- 00000387  03 C7			add eax, edi				;edx:eax = (R(0) * K) + T
- 00000389  F7 75 18			div _MAX					;edx = ((R(0) * K) + T) % MAX_NUM_CHAR which is R(n)
- 0000038C  8B C2			mov eax, edx				;eax = "...see above..."
+ 00000413  F7 E2			mul edx						;edx:eax = R(0) * K
+ 00000415  03 C7			add eax, edi				;edx:eax = (R(0) * K) + T
+ 00000417  F7 75 18			div _MAX					;edx = ((R(0) * K) + T) % MAX_NUM_CHAR which is R(n)
+ 0000041A  8B C2			mov eax, edx				;eax = "...see above..."
 
- 0000038E  8B F9			mov edi, ecx						;edi = OFFSET inputString
- 00000390  03 F8			add edi, eax						;edi = OFFSET inputString + R(n)
+ 0000041C  8B F9			mov edi, ecx						;edi = OFFSET inputString
+ 0000041E  03 F8			add edi, eax						;edi = OFFSET inputString + R(n)
 
- 00000392  51				push ecx							;Let's take the next letter from inputString and put it in outputString
- 00000393  33 C9			xor ecx, ecx
- 00000395  8A 0F			mov cl, BYTE PTR [edi]
+ 00000420  51				push ecx							;Let's take the next letter from inputString and put it in outputString
+ 00000421  33 C9			xor ecx, ecx
+ 00000423  8A 0F			mov cl, BYTE PTR [edi]
 
- 00000397  88 0B			mov [ebx], cl
- 00000399  46				inc esi
- 0000039A  43				inc ebx
+ 00000425  88 0B			mov [ebx], cl
+ 00000427  46				inc esi
+ 00000428  43				inc ebx
 
- 0000039B  59				pop ecx
+ 00000429  59				pop ecx
 
- 0000039C			ShouldWeLoop:							;now check if esi == MAX_NUM_CHAR then {we are done} else {loop again}
- 0000039C  3B 75 18			cmp esi, _MAX
- 0000039F  74 02			je No
- 000003A1  EB DC			jmp L1
- 000003A3			No:
+ 0000042A			ShouldWeLoop:							;now check if esi == MAX_NUM_CHAR then {we are done} else {loop again}
+ 0000042A  3B 75 18			cmp esi, _MAX
+ 0000042D  74 02			je No
+ 0000042F  EB DC			jmp L1
+ 00000431			No:
 					ret
- 000003A3  5E		   *	    pop    esi
- 000003A4  C9		   *	    leave  
- 000003A5  C2 0018	   *	    ret    00018h
- 000003A8			PseudoRandDecrypt ENDP
+ 00000431  5E		   *	    pop    esi
+ 00000432  C9		   *	    leave  
+ 00000433  C2 0018	   *	    ret    00018h
+ 00000436			PseudoRandDecrypt ENDP
 
- 000003A8			Decryption PROC
-
- 000003A8			Decryption ENDP
+ 00000436			Decryption PROC
+ 00000436  49				dec ecx
+ 00000437  8B F0			mov esi, eax
+ 00000439				decryptLoop:
+ 00000439  F7 E6				mul esi
+ 0000043B  F7 F3				div ebx
+ 0000043D  8B C2				mov eax, edx
+ 0000043F  BA 00000000				mov edx, 0
+ 00000444  E2 F3			loop decryptLoop
+ 00000446  C3				ret
+ 00000447			Decryption ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/10/14 14:26:56
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 17:51:07
 Encryption UI (Encrypt_UI.asm				     Symbols 2 - 1
 
 
@@ -713,8 +778,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000076F4 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000003A8 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00016158 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000447 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -727,11 +792,13 @@ Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Decryption . . . . . . . . . . .	P Near	 000003A8 _TEXT	Length= 00000000 Public STDCALL
+Decryption . . . . . . . . . . .	P Near	 00000436 _TEXT	Length= 00000011 Public STDCALL
+  decryptLoop  . . . . . . . . .	L Near	 00000439 _TEXT	
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Encryption . . . . . . . . . . .	P Near	 00000370 _TEXT	Length= 00000000 Public STDCALL
+Encryption . . . . . . . . . . .	P Near	 000003ED _TEXT	Length= 00000011 Public STDCALL
+  encryptIt  . . . . . . . . . .	L Near	 000003F0 _TEXT	
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -771,26 +838,26 @@ OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-PseudoRandDecrypt  . . . . . . .	P Near	 00000370 _TEXT	Length= 00000038 Public STDCALL
+PseudoRandDecrypt  . . . . . . .	P Near	 000003FE _TEXT	Length= 00000038 Public STDCALL
   _K . . . . . . . . . . . . . .	DWord	 bp + 00000008
   _output  . . . . . . . . . . .	DWord	 bp + 0000000C
   _R0  . . . . . . . . . . . . .	DWord	 bp + 00000010
   _input . . . . . . . . . . . .	DWord	 bp + 00000014
   _MAX . . . . . . . . . . . . .	DWord	 bp + 00000018
   _T . . . . . . . . . . . . . .	DWord	 bp + 0000001C
-  L1 . . . . . . . . . . . . . .	L Near	 0000037F _TEXT	
-  ShouldWeLoop . . . . . . . . .	L Near	 0000039C _TEXT	
-  No . . . . . . . . . . . . . .	L Near	 000003A3 _TEXT	
-PseudoRandEncrypt  . . . . . . .	P Near	 0000032E _TEXT	Length= 00000042 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 0000040D _TEXT	
+  ShouldWeLoop . . . . . . . . .	L Near	 0000042A _TEXT	
+  No . . . . . . . . . . . . . .	L Near	 00000431 _TEXT	
+PseudoRandEncrypt  . . . . . . .	P Near	 000003AB _TEXT	Length= 00000042 Public STDCALL
   _K . . . . . . . . . . . . . .	DWord	 bp + 00000008
   _output  . . . . . . . . . . .	DWord	 bp + 0000000C
   _R0  . . . . . . . . . . . . .	DWord	 bp + 00000010
   _input . . . . . . . . . . . .	DWord	 bp + 00000014
   _MAX . . . . . . . . . . . . .	DWord	 bp + 00000018
   _T . . . . . . . . . . . . . .	DWord	 bp + 0000001C
-  L1 . . . . . . . . . . . . . .	L Near	 0000033D _TEXT	
-  ShouldWeLoop . . . . . . . . .	L Near	 00000364 _TEXT	
-  No . . . . . . . . . . . . . .	L Near	 0000036B _TEXT	
+  L1 . . . . . . . . . . . . . .	L Near	 000003BA _TEXT	
+  ShouldWeLoop . . . . . . . . .	L Near	 000003E1 _TEXT	
+  No . . . . . . . . . . . . . .	L Near	 000003E8 _TEXT	
 Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -843,12 +910,14 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000032E Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000003AB Public STDCALL
   Initial  . . . . . . . . . . .	L Near	 00000000 _TEXT	
-  Decrypt  . . . . . . . . . . .	L Near	 00000187 _TEXT	
-  OpenFileError  . . . . . . . .	L Near	 000002F2 _TEXT	
-  file_readError . . . . . . . .	L Near	 00000306 _TEXT	
-  writeFalse_Error . . . . . . .	L Near	 0000031A _TEXT	
+  EncryptionLoop . . . . . . . .	L Near	 00000161 _TEXT	
+  Decrypt  . . . . . . . . . . .	L Near	 000001BE _TEXT	
+  DecryptDataLoop  . . . . . . .	L Near	 00000296 _TEXT	
+  OpenFileError  . . . . . . . .	L Near	 0000036F _TEXT	
+  file_readError . . . . . . . .	L Near	 00000383 _TEXT	
+  writeFalse_Error . . . . . . .	L Near	 00000397 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -875,6 +944,7 @@ CREATE_NEW . . . . . . . . . . .	Number	 00000001h
 CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
 CreateFile . . . . . . . . . . .	Text   	 CreateFileA
 DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
+EFileData  . . . . . . . . . . .	DWord	 00003C50 _DATA	
 ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
 ENABLE_LINE_INPUT  . . . . . . .	Number	 00000002h   
 ENABLE_MOUSE_INPUT . . . . . . .	Number	 00000010h   
@@ -883,6 +953,7 @@ ENABLE_PROCESSED_OUTPUT  . . . .	Number	 00000001h
 ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h   
 ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
 ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
+EncryptedByte  . . . . . . . . .	DWord	 00016148 _DATA	
 FALSE  . . . . . . . . . . . . .	Number	 00000000h   
 FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
 FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
@@ -939,7 +1010,7 @@ INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h
 KBDOWN_FLAG  . . . . . . . . . .	Number	 00000001h   
 KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
-K  . . . . . . . . . . . . . . .	DWord	 000076EC _DATA	
+K  . . . . . . . . . . . . . . .	DWord	 00016150 _DATA	
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
@@ -974,7 +1045,7 @@ NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
-R0 . . . . . . . . . . . . . . .	DWord	 000076F0 _DATA	
+R0 . . . . . . . . . . . . . . .	DWord	 00016154 _DATA	
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
 ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
@@ -989,7 +1060,7 @@ SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
 TAB  . . . . . . . . . . . . . .	Number	 00000009h   
 TRUE . . . . . . . . . . . . . .	Number	 00000001h   
 TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
-T  . . . . . . . . . . . . . . .	DWord	 000076E8 _DATA	
+T  . . . . . . . . . . . . . . .	DWord	 0001614C _DATA	
 VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
 VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
 VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
@@ -1099,7 +1170,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-manipData  . . . . . . . . . . .	Byte	 00003C50 _DATA	
+manipData  . . . . . . . . . . .	Byte	 000126B0 _DATA	
 multPrompt . . . . . . . . . . .	Byte	 000000A1 _DATA	
 nPrompt  . . . . . . . . . . . .	Byte	 00000086 _DATA	
 nValue . . . . . . . . . . . . .	DWord	 00000123 _DATA	

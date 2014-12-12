@@ -1,14 +1,14 @@
-﻿Build started 12/10/2014 2:26:56 PM.
-     1>Project "C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\Final_UI\Project.vcxproj" on node 2 (Build target(s)).
+﻿Build started 12/11/2014 5:51:06 PM.
+     1>Project "C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\Final_UI\Project.vcxproj" on node 2 (Build target(s)).
      1>_MASM:
          Assembling Encrypt_UI.asm...
-         cmd.exe /C "C:\Users\pherbert17\AppData\Local\Temp\tmp246fbc4288c44e9cbc8d41c90def79b5.cmd"
+         cmd.exe /C "C:\Users\jTrader17\AppData\Local\Temp\tmpaf5b7bf3680446beb58155868ca22745.cmd"
          ml.exe /c /nologo /Sg /WX /Zi /Fo"Debug\Encrypt_UI.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /TaEncrypt_UI.asm
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.exe" /NOLOGO /LIBPATH:c:\Irvine user32.lib irvine32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.lib" /MACHINE:X86 /SAFESEH:NO Debug\Encrypt_UI.obj
-         Project.vcxproj -> C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.exe
-     1>Done Building Project "C:\Users\pherbert17\Documents\GitHub\EncodingFinalProject\Final_UI\Project.vcxproj" (Build target(s)).
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.exe" /NOLOGO /LIBPATH:c:\Irvine user32.lib irvine32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.lib" /MACHINE:X86 /SAFESEH:NO Debug\Encrypt_UI.obj
+         Project.vcxproj -> C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\Final_UI\Debug\Project.exe
+     1>Done Building Project "C:\Users\jTrader17\Documents\GitHub\EncodingFinalProject\Final_UI\Project.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.34
+Time Elapsed 00:00:01.13

@@ -1,1 +1,0 @@
-This is a test input for assembler do not panic. Beep beep motherfucker!
