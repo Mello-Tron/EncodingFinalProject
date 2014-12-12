@@ -263,6 +263,8 @@ mov iByteCount, eax
 mov eax, fileHandle
 call CloseFile
 
+call Clrscr
+
 jmp Initial
 
 exit
@@ -376,11 +378,7 @@ call Clrscr
 	call WriteString
 	mov eax, iByteCount
 	call WriteInt
-	call Crlf
-	mov edx, OFFSET newLengthPrompt
-	call WriteString
-	call ReadInt
-	mov iByteCount, eax
+	call crlf
 	dec eax
 	mov R0, eax
 	mov edx, OFFSET multPrompt
