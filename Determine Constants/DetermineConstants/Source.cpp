@@ -74,24 +74,27 @@ void primeFactors(int n, vector<int>& factors)
 
 int main()
 {
-	cout << "Please enter the length of your message: ";
-	int n = 315; //max size of n: 2147483647
-	cin >> n;
-	vector<int> factors;
-	primeFactors(n, factors);
-
-	int K = 1;
-	for (int i = 0; i < factors.size(); i++)
+	char exit = 'y';
+	while (exit != 'n')
 	{
-		K *= factors[i];
-	}
-	K += 1;
-	cout << "K: " << K << endl;
+		cout << "Please enter the length of your message: ";
+		int n = 315; //max size of n: 2147483647
+		cin >> n;
+		vector<int> factors;
+		primeFactors(n, factors);
 
-	if (n % 2 == 0)
-		cout << "T: " << 3 << endl;
-	else
-		cout << "T: " << 2 << endl;
+		int K = 1;
+		for (int i = 0; i < factors.size(); i++)
+		{
+			K *= factors[i];
+		}
+		K += 1;
+		cout << endl;
+		cout << "Multiplier & Counter = " << K << endl;
+
+		cout << "Would like to run again? (y or n): ";
+		cin >> exit;
+	}
 
 	return 0;
 }
