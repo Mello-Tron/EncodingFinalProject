@@ -82,10 +82,10 @@ encryption
 --------------------------------
 !
 
-fileData	BYTE	BUFFER DUP(?)
+fileData	BYTE	BUFFER DUP(' ')
 EFileData	DWORD	BUFFER DUP(?)
 align		DWORD
-manipData	BYTE	BUFFER DUP(?)
+manipData	BYTE	BUFFER DUP(' ')
 align		DWORD
 EncryptedByte DWORD ?
 
@@ -249,7 +249,6 @@ EncryptionLoop:
 	call Encryption
 	pop esi
 	mov EncryptedByte, eax
-	call WriteInt
 	mov eax, fileHandle
 	mov ecx, 4
 	mov edx, OFFSET EncryptedByte
@@ -263,6 +262,8 @@ mov iByteCount, eax
 
 mov eax, fileHandle
 call CloseFile
+
+jmp Initial
 
 exit
 

@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 17:51:07
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:34:53
 Encryption UI (Encrypt_UI.asm				     Page 1 - 1
 
 
@@ -171,15 +171,15 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 17:51:07
 				--------------------------------
 				!
 
- 000001B8  00003A98 [		fileData	BYTE	BUFFER DUP(?)
-	    00
+ 000001B8  00003A98 [		fileData	BYTE	BUFFER DUP(' ')
+	    20
 	   ]
  00003C50  00003A98 [		EFileData	DWORD	BUFFER DUP(?)
 	    00000000
 	   ]
 				align		DWORD
- 000126B0  00003A98 [		manipData	BYTE	BUFFER DUP(?)
-	    00
+ 000126B0  00003A98 [		manipData	BYTE	BUFFER DUP(' ')
+	    20
 	   ]
 				align		DWORD
  00016148 00000000		EncryptedByte DWORD ?
@@ -344,20 +344,21 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 17:51:07
  0000017A  E8 0000026E			call Encryption
  0000017F  5E				pop esi
  00000180  A3 00016148 R		mov EncryptedByte, eax
- 00000185  E8 00000000 E		call WriteInt
- 0000018A  A1 00000171 R		mov eax, fileHandle
- 0000018F  B9 00000004			mov ecx, 4
- 00000194  BA 00016148 R		mov edx, OFFSET EncryptedByte
- 00000199  E8 00000000 E		call WriteToFile
- 0000019E  46				inc esi
- 0000019F  59				pop ecx
- 000001A0  E2 BF		loop EncryptionLoop
+ 00000185  A1 00000171 R		mov eax, fileHandle
+ 0000018A  B9 00000004			mov ecx, 4
+ 0000018F  BA 00016148 R		mov edx, OFFSET EncryptedByte
+ 00000194  E8 00000000 E		call WriteToFile
+ 00000199  46				inc esi
+ 0000019A  59				pop ecx
+ 0000019B  E2 C4		loop EncryptionLoop
 
- 000001A2  0F 82 000001EF	jc writeFalse_Error
- 000001A8  A3 00000169 R	mov iByteCount, eax
+ 0000019D  0F 82 000001F4	jc writeFalse_Error
+ 000001A3  A3 00000169 R	mov iByteCount, eax
 
- 000001AD  A1 00000171 R	mov eax, fileHandle
- 000001B2  E8 00000000 E	call CloseFile
+ 000001A8  A1 00000171 R	mov eax, fileHandle
+ 000001AD  E8 00000000 E	call CloseFile
+
+ 000001B2  E9 FFFFFE49		jmp Initial
 
 				exit
  000001B7  6A 00	   *	    push   +000000000h
@@ -684,7 +685,7 @@ Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 17:51:07
  00000447			Decryption ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 17:51:07
+Microsoft (R) Macro Assembler Version 12.00.30501.0	    12/11/14 18:34:53
 Encryption UI (Encrypt_UI.asm				     Symbols 2 - 1
 
 
