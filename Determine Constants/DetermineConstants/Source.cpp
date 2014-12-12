@@ -1,5 +1,3 @@
-// Program to print all prime factors
-//Pulled barebones primeFactors function from http://www.geeksforgeeks.org/print-all-prime-factors-of-a-given-number/
 #include <iostream>
 # include <stdio.h>
 # include <math.h>
