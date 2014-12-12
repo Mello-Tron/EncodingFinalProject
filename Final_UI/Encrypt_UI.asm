@@ -470,7 +470,7 @@ L1:
 	xor edx, edx
 	mov dl, BYTE PTR [edi]				;edx = the character at R(n) location in outputString
 
-	;test edx, 110					;test with " " which is 20h which is 00100000b
+	;test edx, 110						;test with " " which is 20h which is 00100000b
 	;jnz ShouldWeLoop					;lets jump if there is something other than an empty space
 
 	push ebx
